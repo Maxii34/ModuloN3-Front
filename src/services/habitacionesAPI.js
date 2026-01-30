@@ -1,4 +1,4 @@
-const API_URL = 'https://modulo-n-3-backend.vercel.app/api/habitaciones';
+const API_URL = import.meta.env.VITE_API_HABITACIONES;
 
 /*
 

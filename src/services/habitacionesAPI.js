@@ -24,18 +24,22 @@ Obtiene una habitación por su ID
 @param {string} id - ID de la habitación
 @returns {Promise} Datos de la habitación
 */
-export const obtenerHabitacionPorId = async (id) => {
-try {
-const response = await fetch(`${API_URL}/${id}`);
-if (!response.ok) {
-throw new Error('Error al obtener la habitación');
-}
-const data = await response.json();
-return data;
-} catch (error) {
-console.error('Error en obtenerHabitacionPorId:', error);
-throw error;
-}
+export const obtenerHabitacionPorId = async (id, token) => {
+  try {
+    const response = await fetch(`${API_URL}/${id}`, {
+      headers: {
+        "x-token": token,
+      },
+    });
+    if (!response.ok) {
+      throw new Error("Error al obtener la habitación");
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error en obtenerHabitacionPorId:", error);
+    throw error;
+  }
 };
 /*
 
@@ -48,34 +52,36 @@ Actualiza una habitación existente
 @returns {Promise} Respuesta del servidor
 */
 export const actualizarHabitacion = async (id, habitacionData) => {
-try {
+  try {
 // Recuperar token desde sessionStorage (igual que otras consultas que requieren auth)
-const usuarioRaw = sessionStorage.getItem("usuarioKey");
-if (!usuarioRaw) {
-throw new Error("No hay token en la petición");
-}
-const token = JSON.parse(usuarioRaw).token;
+    const usuarioRaw = sessionStorage.getItem("usuarioKey");
+    if (!usuarioRaw) {
+      throw new Error("No hay token en la petición");
+    }
+    const token = JSON.parse(usuarioRaw).token;
 
-const response = await fetch(`${API_URL}/${id}`, {
-method: 'PUT',
-headers: {
-'Content-Type': 'application/json',
-'x-token': token,
-},
-body: JSON.stringify(habitacionData),
-});
+    const response = await fetch(`${API_URL}/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "x-token": token,
+      },
+      body: JSON.stringify(habitacionData),
+    });
 
-if (!response.ok) {
-const errorData = await response.json();
-throw new Error(errorData.mensaje || 'Error al actualizar la habitación');
-}
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(
+        errorData.mensaje || "Error al actualizar la habitación"
+      );
+    }
 
-const data = await response.json();
-return data;
-} catch (error) {
-console.error('Error en actualizarHabitacion:', error);
-throw error;
-}
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error en actualizarHabitacion:", error);
+    throw error;
+  }
 };
 
 /**
@@ -86,27 +92,28 @@ Crea una nueva habitación
 
 @returns {Promise} Respuesta del servidor
 */
-export const crearHabitacion = async (habitacionData) => {
-try {
-const response = await fetch(API_URL, {
-method: 'POST',
-headers: {
-'Content-Type': 'application/json',
-},
-body: JSON.stringify(habitacionData),
-});
+export const crearHabitacion = async (habitacionData, token) => {
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-token": token,
+      },
+      body: JSON.stringify(habitacionData),
+    });
 
-if (!response.ok) {
-const errorData = await response.json();
-throw new Error(errorData.mensaje || 'Error al crear la habitación');
-}
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.mensaje || "Error al crear la habitación");
+    }
 
-const data = await response.json();
-return data;
-} catch (error) {
-console.error('Error en crearHabitacion:', error);
-throw error;
-}
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error en crearHabitacion:", error);
+    throw error;
+  }
 };
 
 /**

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button, Modal, Badge, Card } from "react-bootstrap";
 import Swal from "sweetalert2";
 import { eliminarUsuario } from "../../../services/usuariosAPI";
+import { obtenerHabitacionPorId } from "../../../services/habitacionesAPI";
 
 const UserRow = ({ usuario, onUsuarioEliminado }) => {
   const [showModal, setShowModal] = useState(false);
@@ -45,17 +46,16 @@ const UserRow = ({ usuario, onUsuarioEliminado }) => {
     }
   };
 
-  const habitacionesBack = import.meta.env.VITE_API_HABITACIONES;
-
   const handleOpenModal = async () => {
     setShowModal(true);
 
     if (usuario.habitacionAsignada) {
       try {
-        const resp = await fetch(
-          `${habitacionesBack}/${usuario.habitacionAsignada}`
+        const usuarioKey = JSON.parse(sessionStorage.getItem("usuarioKey"));
+        const data = await obtenerHabitacionPorId(
+          usuario.habitacionAsignada,
+          usuarioKey.token
         );
-        const data = await resp.json();
         setHabitacion(data);
       } catch (error) {
         console.error(error);

@@ -16,7 +16,8 @@ const AdminUsuarios = () => {
 
   const cargarUsuarios = async () => {
     try {
-      const data = await listarUsuarios();
+      const usuarioKey = JSON.parse(sessionStorage.getItem("usuarioKey"));
+      const data = await listarUsuarios(usuarioKey.token);
       setUsuarios(data);
     } catch (error) {
       console.error(error);

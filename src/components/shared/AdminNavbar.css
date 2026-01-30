@@ -1,0 +1,139 @@
+.admin-navbar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  width: 280px;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  padding: 0;
+}
+
+.admin-navbar-header {
+  padding: 2rem 1.5rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.admin-navbar-logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+.logo-icon {
+  font-size: 2.5rem;
+  color: #ffffff;
+  background-color: #1a4d7a;
+  padding: 0.75rem;
+  border-radius: 10px;
+  display: block;
+}
+
+.admin-navbar-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a4d7a;
+  margin: 0;
+  text-align: center;
+}
+
+.admin-navbar-subtitle {
+  font-size: 0.875rem;
+  color: #6c757d;
+  margin: 0.25rem 0 0 0;
+  text-align: center;
+}
+
+.admin-navbar-menu {
+  flex: 1;
+  padding: 1rem 0;
+  overflow-y: auto;
+}
+
+.admin-navbar-item {
+  display: flex;
+  align-items: center;
+  padding: 0.875rem 1.5rem;
+  margin: 0.25rem 1rem;
+  color: #495057;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: calc(100% - 2rem);
+  font-size: 1rem;
+}
+
+.admin-navbar-item:hover {
+  background-color: #f8f9fa;
+  color: #1a4d7a;
+}
+
+.admin-navbar-item.active {
+  background-color: #e3f2fd;
+  color: #1a4d7a;
+  font-weight: 600;
+}
+
+.admin-navbar-item.active .admin-navbar-icon {
+  color: #1a4d7a;
+}
+
+.admin-navbar-icon {
+  font-size: 1.25rem;
+  margin-right: 0.75rem;
+  color: #6c757d;
+  transition: color 0.2s ease;
+}
+
+.admin-navbar-item:hover .admin-navbar-icon {
+  color: #1a4d7a;
+}
+
+.admin-navbar-label {
+  font-size: 1rem;
+}
+
+.admin-navbar-footer {
+  padding: 1rem 0;
+  border-top: 1px solid #e9ecef;
+}
+
+.admin-navbar-logout {
+  color: #6c757d;
+}
+
+.admin-navbar-logout:hover {
+  background-color: #fff5f5;
+  color: #dc3545;
+}
+
+.admin-navbar-logout:hover .admin-navbar-icon {
+  color: #dc3545;
+}
+
+/* Ajuste para el contenido principal cuando el navbar está visible */
+.admin-layout {
+  margin-left: 280px;
+  min-height: 100vh;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .admin-navbar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+
+  .admin-layout {
+    margin-left: 0;
+  }
+}

@@ -1,0 +1,204 @@
+.css-modal-login {
+  padding: 15px;
+}
+
+.css-modal-login .form-label {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.css-modal-login .form-control {
+  padding: 12px 14px;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 15px;
+  transition: all 0.3s ease;
+}
+
+.css-modal-login .form-control:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.15);
+  outline: none;
+}
+
+.css-modal-login .form-control::placeholder {
+  color: #aaa;
+  font-size: 14px;
+}
+
+.css-modal-login .btn-primary {
+  padding: 10px;
+  font-weight: 600;
+  background: linear-gradient(135deg, rgba(255, 200, 150, 1) 0%, rgba(200, 220, 255, 1) 50%, rgba(150, 200, 255, 1) 100%);
+  border: none;
+  border-radius: 8px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  font-size: 16px;
+  color: #333;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.css-modal-login .btn-primary:hover {
+  background: linear-gradient(135deg, rgba(255, 180, 130, 1) 0%, rgba(180, 200, 255, 1) 50%, rgba(130, 180, 255, 1) 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+}
+/*Css- para el modal de Register*/
+
+.css-modal-register {
+  padding:5px;
+}
+
+.css-modal-register .form-label {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+
+.css-modal-register .form-control {
+  padding: 8px 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.css-modal-register .form-control:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.15);
+  outline: none;
+}
+
+.css-modal-register .form-control::placeholder {
+  color: #aaa;
+  font-size: 13px;
+}
+
+.css-modal-register .btn-primary {
+  padding: 10px;
+  font-weight: 600;
+  background: linear-gradient(135deg, rgba(255, 200, 150, 1) 0%, rgba(200, 220, 255, 1) 50%, rgba(150, 200, 255, 1) 100%);
+  border: none;
+  border-radius: 8px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  font-size: 16px;
+  color: #333;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.css-modal-register .btn-primary:hover {
+  background: linear-gradient(135deg, rgba(255, 180, 130, 1) 0%, rgba(180, 200, 255, 1) 50%, rgba(130, 180, 255, 1) 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Estilo base de la tarjeta */
+.card {
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+}
+
+.card-nosotros {
+    /* Mantenemos el ancho para desktop */
+    width: 250px; 
+    min-width: 200px;
+    max-width: 100%;
+    height: auto; 
+    border-radius: 15px;
+    overflow: hidden;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+/* Estilo para la imagen circular */
+.card-img-circle {
+    width: 150px !important;
+    height: 150px !important;
+    min-width: 150px;
+    min-height: 150px;
+    max-width: 150px;
+    max-height: 150px;
+    object-fit: cover;
+    margin-bottom: 15px;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 50% !important;
+    display: block;
+    transition: box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out; 
+}
+
+.card-img-circle:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); 
+    transform: scale(1.03);
+}
+
+/*Boton GitHub*/
+
+.Btn {
+  border: none;
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition-duration: .4s;
+  cursor: pointer;
+  position: relative;
+  background-color: rgb(31, 31, 31);
+  overflow: hidden;
+}
+
+.svgIcon {
+  transition-duration: .3s;
+}
+
+.svgIcon path {
+  fill: white;
+}
+
+.text {
+  position: absolute;
+  color: rgb(255, 255, 255);
+  width: 120px;
+  font-weight: 600;
+  opacity: 0;
+  transition-duration: .4s;
+}
+
+.Btn:hover {
+  width: 110px;
+  transition-duration: .4s;
+  border-radius: 30px;
+}
+
+.Btn:hover .text {
+  opacity: 1;
+  transition-duration: .4s;
+}
+
+.Btn:hover .svgIcon {
+  opacity: 0;
+  transition-duration: .3s;
+}
+
+/* Evitar el padding-right cuando se abre el modal */
+body.modal-open {
+  padding-right: 0 !important;
+}
+
+/* Mantener el overflow hidden para evitar scroll de fondo */
+body.modal-open {
+  overflow: hidden;
+}

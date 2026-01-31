@@ -25,7 +25,6 @@ const AdminHabitaciones = () => {
 
   const habitacionesBack = import.meta.env.VITE_API_HABITACIONES;
 
-
   // LEER (GET)
   const obtenerHabitaciones = async () => {
     try {
@@ -52,7 +51,7 @@ const AdminHabitaciones = () => {
         imagen: data.imagen,
         capacidad: parseInt(data.capacidad),
         piso: parseInt(data.piso),
-        metros: parseInt(data.metrosCuadrados), 
+        metros: parseInt(data.metrosCuadrados),
         caracteristicas: data.caracteristicas,
         descripcion: data.descripcion,
       };
@@ -65,7 +64,11 @@ const AdminHabitaciones = () => {
         !Number.isFinite(habitacionNueva.piso) ||
         !Number.isFinite(habitacionNueva.metros)
       ) {
-        Swal.fire("Error", "Completa correctamente los campos numéricos.", "error");
+        Swal.fire(
+          "Error",
+          "Completa correctamente los campos numéricos.",
+          "error",
+        );
         return;
       }
 
@@ -84,7 +87,10 @@ const AdminHabitaciones = () => {
         reset();
         obtenerHabitaciones();
       } else if (respuesta) {
-        const mensaje = respuesta.datos?.mensaje || respuesta.datos?.msg || "No se pudo guardar la habitación";
+        const mensaje =
+          respuesta.datos?.mensaje ||
+          respuesta.datos?.msg ||
+          "No se pudo guardar la habitación";
         console.error("Error al crear habitación:", respuesta.datos);
         Swal.fire("Error", mensaje, "error");
       } else {
@@ -98,34 +104,34 @@ const AdminHabitaciones = () => {
 
   // BORRAR (DELETE)
   const borrarHabitacion = (id) => {
-  Swal.fire({
-    title: "¿Estás seguro?",
-    text: "¡No podrás revertir esto!",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#d33",
-    cancelButtonColor: "#3085d6",
-    confirmButtonText: "Sí, eliminar",
-  }).then(async (result) => {
-    if (result.isConfirmed) {
-      const respuesta = await eliminarHabitacion(id);
+    Swal.fire({
+      title: "¿Estás seguro?",
+      text: "¡No podrás revertir esto!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Sí, eliminar",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const respuesta = await eliminarHabitacion(id);
 
-      if (respuesta && (respuesta.status === 200 || respuesta.ok)) {
-        // Actualizamos el estado local
-        setHabitaciones(
-          habitaciones.filter((hab) => (hab._id || hab.id) !== id)
-        );
-        Swal.fire("¡Eliminado!", "La habitación fue eliminada.", "success");
-      } else {
-        Swal.fire(
-          "Error", 
-          "No se pudo eliminar. Verifique si tiene permisos de administrador.", 
-          "error"
-        );
+        if (respuesta && (respuesta.status === 200 || respuesta.ok)) {
+          // Actualizamos el estado local
+          setHabitaciones(
+            habitaciones.filter((hab) => (hab._id || hab.id) !== id),
+          );
+          Swal.fire("¡Eliminado!", "La habitación fue eliminada.", "success");
+        } else {
+          Swal.fire(
+            "Error",
+            "No se pudo eliminar. Verifique si tiene permisos de administrador.",
+            "error",
+          );
+        }
       }
-    }
-  });
-};
+    });
+  };
 
   // LÓGICA DEL MODAL
   const handleEditarHabitacion = (habitacion) => {
@@ -187,7 +193,10 @@ const AdminHabitaciones = () => {
                 placeholder="Ej: 5000"
                 {...register("precio", {
                   required: "El precio es obligatorio",
-                  min: { value: 0, message: "El precio debe ser mayor o igual a 0" },
+                  min: {
+                    value: 0,
+                    message: "El precio debe ser mayor o igual a 0",
+                  },
                 })}
               />
               {errors.precio && (
@@ -253,6 +262,17 @@ const AdminHabitaciones = () => {
                   required: "Las características son obligatorias",
                   minLength: { value: 5, message: "Debe ser más descriptivo" },
                 })}
+                {...register("caracteristicas", {
+                  required: "Las características son obligatorias",
+                  minLength: {
+                    value: 2,
+                    message: "Mínimo 2 caracteres",
+                  },
+                  maxLength: {
+                    value: 50,
+                    message: "Máximo 50 caracteres permitidos",
+                  },
+                })}
               />
               {errors.caracteristicas && (
                 <span className="text-danger small">
@@ -270,7 +290,11 @@ const AdminHabitaciones = () => {
                   required: "La descripción es obligatoria",
                   minLength: {
                     value: 10,
-                    message: "La descripción es muy corta",
+                    message: "Mínimo 10 caracteres",
+                  },
+                  maxLength: {
+                    value: 500,
+                    message: "Máximo 500 caracteres permitidos",
                   },
                 })}
               />
@@ -295,7 +319,7 @@ const AdminHabitaciones = () => {
                         required: "Seleccione un estado",
                       })}
                     />
-                  )
+                  ),
                 )}
               </div>
               {errors.estado && (

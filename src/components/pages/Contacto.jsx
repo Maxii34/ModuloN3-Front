@@ -1,6 +1,62 @@
 import { Container, Row, Col, Form, Button, Card } from "react-bootstrap";
+import { useForm } from "react-hook-form";
+import { useState } from "react";
+import emailjs from "@emailjs/browser";
+import Swal from "sweetalert2";
 
 export const Contacto = () => {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm();
+
+  // Agregar estos estados al inicio de tu componente
+  const [mensajeExito, setMensajeExito] = useState(false);
+  const [error, setError] = useState("");
+  const [enviando, setEnviando] = useState(false);
+
+  const onSubmit = async (data) => {
+    setEnviando(true);
+    setError("");
+
+    try {
+      await emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        {
+          nombre: data.nombreCompleto,
+          email: data.email,
+          telefono: data.telefono,
+          tipoConsulta: data.tipoConsulta,
+          mensaje: data.mensaje,
+        },
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
+      );
+
+      Swal.fire({
+        title: "¡Mensaje enviado!",
+        text: "Gracias por contactarnos. Te responderemos pronto.",
+        icon: "success",
+        confirmButtonText: "Aceptar",
+        confirmButtonColor: "#0d6efd",
+      });
+      reset();
+    } catch (error) {
+      Swal.fire({
+        title: "Error",
+        text: "Hubo un problema al enviar el mensaje. Intenta nuevamente.",
+        icon: "error",
+        confirmButtonText: "Aceptar",
+        confirmButtonColor: "#dc3545",
+      });
+      console.error("Error:", error);
+    } finally {
+      setEnviando(false);
+    }
+  };
+
   return (
     <Container className="my-5">
       {/* Banner */}
@@ -65,7 +121,7 @@ export const Contacto = () => {
                 Cuéntanos qué necesitas y te responderemos lo antes posible.
               </p>
 
-              <Form>
+              <Form onSubmit={handleSubmit(onSubmit)}>
                 {/* Nombre Completo */}
                 <Form.Group className="mb-3">
                   <Form.Label className="fw-semibold">
@@ -74,7 +130,25 @@ export const Contacto = () => {
                   <Form.Control
                     type="text"
                     placeholder="Escribe tu nombre y apellidos"
+                    {...register("nombreCompleto", {
+                      required: "El nombre completo es obligatorio",
+                      minLength: {
+                        value: 3,
+                        message:
+                          "El nombre completo debe tener al menos 3 caracteres",
+                      },
+                      maxLength: {
+                        value: 50,
+                        message:
+                          "El nombre completo no puede exceder los 50 caracteres",
+                      },
+                    })}
                   />
+                  {errors.nombreCompleto && (
+                    <span className="text-danger">
+                      {errors.nombreCompleto.message}
+                    </span>
+                  )}
                 </Form.Group>
 
                 {/* Email y Teléfono */}
@@ -85,13 +159,52 @@ export const Contacto = () => {
                       <Form.Control
                         type="email"
                         placeholder="tucorreo@ejemplo.com"
+                        {...register("email", {
+                          required: "El email es requerido",
+                          pattern: {
+                            value:
+                              /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                            message: "El email no es válido",
+                          },
+                        })}
                       />
+                      {errors.email && (
+                        <span className="text-danger">
+                          {errors.email.message}
+                        </span>
+                      )}
                     </Form.Group>
                   </Col>
+
                   <Col md={6}>
                     <Form.Group>
                       <Form.Label className="fw-semibold">Teléfono</Form.Label>
-                      <Form.Control type="tel" placeholder="+54" />
+                      <Form.Control
+                        type="tel"
+                        placeholder="+54"
+                        {...register("telefono", {
+                          required: "El teléfono es requerido",
+                          minLength: {
+                            value: 10,
+                            message:
+                              "El teléfono debe tener al menos 10 dígitos",
+                          },
+                          maxLength: {
+                            value: 15,
+                            message: "El teléfono no puede exceder 15 dígitos",
+                          },
+                          pattern: {
+                            value: /^[0-9+\-\s()]*$/,
+                            message:
+                              "El teléfono solo puede contener números y símbolos válidos",
+                          },
+                        })}
+                      />
+                      {errors.telefono && (
+                        <span className="text-danger">
+                          {errors.telefono.message}
+                        </span>
+                      )}
                     </Form.Group>
                   </Col>
                 </Row>
@@ -101,7 +214,12 @@ export const Contacto = () => {
                   <Form.Label className="fw-semibold">
                     Tipo de consulta
                   </Form.Label>
-                  <Form.Select defaultValue="">
+                  <Form.Select
+                    defaultValue=""
+                    {...register("tipoConsulta", {
+                      required: "El tipo de consulta es requerido",
+                    })}
+                  >
                     <option value="" disabled>
                       Selecciona una opción
                     </option>
@@ -119,7 +237,24 @@ export const Contacto = () => {
                     as="textarea"
                     rows={3}
                     placeholder="Indícanos detalles de tu reserva, número de personas o cualquier petición especial."
+                    {...register("mensaje", {
+                      required: "El mensaje es obligatorio",
+                      minLength: {
+                        value: 10,
+                        message: "El mensaje debe tener al menos 10 caracteres",
+                      },
+                      maxLength: {
+                        value: 500,
+                        message:
+                          "El mensaje no puede exceder los 500 caracteres",
+                      },
+                    })}
                   />
+                  {errors.mensaje && (
+                    <span className="text-danger">
+                      {errors.mensaje.message}
+                    </span>
+                  )}
                 </Form.Group>
 
                 {/* Botón de Envío */}
@@ -127,19 +262,11 @@ export const Contacto = () => {
                   variant="primary"
                   type="submit"
                   className="w-100 fw-bold py-2"
+                  disabled={enviando}
                 >
-                  Enviar mensaje
+                  {enviando ? "Enviando..." : "Enviar mensaje"}
                 </Button>
               </Form>
-
-              {/* Mensaje de Éxito (solo maquetado, sin lógica) */}
-              <div
-                className="mt-4 p-2 text-center small"
-                style={{ backgroundColor: "#e9f7ef", color: "#155724" }}
-              >
-                Mensaje enviado correctamente. Gracias por contactar con
-                nosotros.
-              </div>
             </Card.Body>
           </Card>
         </Col>
@@ -158,9 +285,7 @@ export const Contacto = () => {
                   </span>
                   <div>
                     <h6 className="mb-1 fw-semibold">Dirección</h6>
-                    <p className="mb-0 text-muted">
-                      Tucuman
-                    </p>
+                    <p className="mb-0 text-muted">Tucuman</p>
                     <a href="#" className="small">
                       Ver en mapa
                     </a>

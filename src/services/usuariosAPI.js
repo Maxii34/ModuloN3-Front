@@ -1,10 +1,11 @@
-// URL base de la API
-const API_BASE_URL = import.meta.env.VITE_API_URL || "https://modulo-n-3-backend.vercel.app/api";
+// URL base de la API (usuarios)
+const API_BASE_URL =
+  import.meta.env.VITE_API_USUARIOS || "http://localhost:3000/api/usuarios";
 
 /**
  * Realiza una petición fetch con manejo de errores
  */
-const realizarPeticion = async (url, opciones = {}) => {
+const realizarPeticion = async (url = "", opciones = {}) => {
   const headers = {
     "Content-Type": "application/json",
     ...opciones.headers,
@@ -34,7 +35,7 @@ const realizarPeticion = async (url, opciones = {}) => {
  * Inicia sesión de un usuario
  */
 export const iniciarSesion = async (email, password) => {
-  return realizarPeticion("/usuarios/login", {
+  return realizarPeticion("/login", {
     method: "POST",
     body: JSON.stringify({ email, password }),
   });
@@ -44,25 +45,29 @@ export const iniciarSesion = async (email, password) => {
  * Crea un nuevo usuario
  */
 export const crearUsuario = async (datosUsuario) => {
-  return realizarPeticion("/usuarios", {
+  return realizarPeticion("", {
     method: "POST",
     body: JSON.stringify(datosUsuario),
   });
 };
 
-
+/**
+ * Lista usuarios 
+ */
 export const listarUsuarios = async (token) => {
-  return realizarPeticion("/usuarios", {
+  return realizarPeticion("", {
     method: "GET",
     headers: {
-      Authorization: `Bearer ${token}`,
+      "x-token": token,
     },
   });
 };
 
-// ELIMINAR USUARIO
+/**
+ * Eliminar usuario
+ */
 export const eliminarUsuario = async (id, token) => {
-  return realizarPeticion(`/usuarios/${id}`, {
+  return realizarPeticion(`/${id}`, {
     method: "DELETE",
     headers: {
       "x-token": token,
@@ -70,22 +75,27 @@ export const eliminarUsuario = async (id, token) => {
   });
 };
 
-// OBTENER USUARIO POR ID (opcional)
+/**
+ * Obtener usuario por ID
+ */
 export const obtenerUsuarioPorId = async (id, token) => {
-  return realizarPeticion(`/usuarios/${id}`, {
+  return realizarPeticion(`/${id}`, {
     method: "GET",
     headers: {
-      Authorization: `Bearer ${token}`,
+      "x-token": token,
     },
   });
 };
 
+/**
+ * Asignar habitación a usuario
+ */
 export const asignarHabitacionUsuario = async (
   idUsuario,
   idHabitacion,
-  token
+  token,
 ) => {
-  return realizarPeticion(`/usuarios/${idUsuario}`, {
+  return realizarPeticion(`/${idUsuario}`, {
     method: "PUT",
     headers: {
       "x-token": token,

@@ -101,6 +101,9 @@ function ReservaHabitacion() {
            throw new Error("Error al guardar la reserva en la base de datos.");
         }
 
+        // Asignar la habitación al usuario
+        await asignarHabitacionUsuario(miId, id, session.token);
+
         // Si todo salió bien:
         await Swal.fire({
           icon: "success",

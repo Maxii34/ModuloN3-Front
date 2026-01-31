@@ -47,7 +47,7 @@ Sigue estos pasos para configurar el proyecto localmente:
 
 1. **Clonar el repositorio**
 ```bash
-git clone [URL_DEL_REPOSITORIO]
+git clone https://github.com/Maxii34/ModuloN3-Front
 ```
 
 2. **Navegar al directorio del proyecto**

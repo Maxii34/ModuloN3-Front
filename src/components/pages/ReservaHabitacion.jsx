@@ -14,14 +14,12 @@ import { useAuth } from "../../context/AuthContext";
 function ReservaHabitacion() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const location = useLocation(); // ← NUEVO
+  const location = useLocation(); 
 
-  // ← NUEVO: Obtener fechas desde el state de navegación
   const { fechaEntrada, fechaSalida } = location.state || {};
-
   const [habitacion, setHabitacion] = useState(null);
   const [cargando, setCargando] = useState(true);
-  const [cantidadHuespedes, setCantidadHuespedes] = useState(1); // ← NUEVO
+  const [cantidadHuespedes, setCantidadHuespedes] = useState(1);
 
   // Obtener usuario para autocompletar
   const { user } = useAuth();
@@ -30,9 +28,9 @@ function ReservaHabitacion() {
   const usuarioActual = user || usuarioStorage;
 
   const habitacionesBack = import.meta.env.VITE_API_HABITACIONES;
-  const reservasBack = import.meta.env.VITE_API_RESERVAS; // ← NUEVO (agregar en .env)
+  const reservasBack = import.meta.env.VITE_API_RESERVAS;
 
-  // ← NUEVO: Validar que existan las fechas
+  //Validar que existan las fechas
   useEffect(() => {
     if (!fechaEntrada || !fechaSalida) {
       Swal.fire({
@@ -53,7 +51,7 @@ function ReservaHabitacion() {
         if (respuesta.ok) {
           const dato = await respuesta.json();
           setHabitacion(dato);
-          // ← NUEVO: Inicializar huéspedes según capacidad
+          // Inicializar huéspedes según capacidad
           if (dato.capacidad === 1) {
             setCantidadHuespedes(1);
           }
@@ -67,7 +65,7 @@ function ReservaHabitacion() {
     cargarDatos();
   }, [id, habitacionesBack]);
 
-  // ← NUEVO: Calcular cantidad de noches
+  // Calcular cantidad de noches
   const calcularNoches = () => {
     if (!fechaEntrada || !fechaSalida) return 1;
     const entrada = new Date(fechaEntrada);
@@ -94,7 +92,7 @@ function ReservaHabitacion() {
 
       const miId = session.usuario.id || session.usuario._id;
 
-      // ← NUEVO: Validar cantidad de huéspedes
+      //Validar cantidad de huéspedes
       if (cantidadHuespedes > habitacion.capacidad) {
         Swal.fire({
           icon: "error",
@@ -127,7 +125,6 @@ function ReservaHabitacion() {
           didOpen: () => Swal.showLoading(),
         });
 
-        // ← MODIFICADO: Ahora usamos POST /api/reservas
         const respuestaReserva = await fetch(
           `${reservasBack || habitacionesBack.replace("/habitaciones", "/reservas")}`,
           {
@@ -137,8 +134,8 @@ function ReservaHabitacion() {
               "x-token": session.token,
             },
             body: JSON.stringify({
-              habitacion: id, // ← Sin "Id"
-              usuario: miId, // ← Sin "Id"
+              habitacion: id, 
+              usuario: miId, 
               fechaEntrada: fechaEntrada,
               fechaSalida: fechaSalida,
               cantidadHuespedes: cantidadHuespedes,
@@ -193,7 +190,7 @@ function ReservaHabitacion() {
     );
   }
 
-  const precioBase = (habitacion.precio || 0) * noches; // ← MODIFICADO: multiplicar por noches
+  const precioBase = (habitacion.precio || 0) * noches; 
   const impuestos = precioBase * 0.02;
   const total = precioBase + impuestos;
 

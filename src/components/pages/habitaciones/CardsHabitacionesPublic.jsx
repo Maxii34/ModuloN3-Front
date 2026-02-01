@@ -8,15 +8,14 @@ const CardsHabitacionesPublic = ({ habitaciones, loginShow, fechaEntrada, fechaS
   const navigate = useNavigate();
   const { user } = useAuth();
 
-
   const handleReservarClick = (idHabitacion) => {
     // 1. Verificamos si hay usuario logueado
     const usuarioStorage = JSON.parse(sessionStorage.getItem("usuarioKey"));
 
     if (user || (usuarioStorage && usuarioStorage.token)) {
-      // === ESCENARIO 1: USUARIO LOGUEADO ===
+      // USUARIO LOGUEADO ===
       
-      // ← NUEVO: Verificar que haya fechas seleccionadas
+      //Verificar que haya fechas seleccionadas
       if (!fechaEntrada || !fechaSalida) {
         Swal.fire({
           icon: "warning",
@@ -27,8 +26,8 @@ const CardsHabitacionesPublic = ({ habitaciones, loginShow, fechaEntrada, fechaS
         return;
       }
 
-      // ← MODIFICADO: Navegar pasando las fechas en el state
-      navigate(`/detalle/${idHabitacion}`, {
+      // Navegar pasando las fechas en el state
+      navigate(`/reserva/${idHabitacion}`, {
         state: {
           fechaEntrada: fechaEntrada,
           fechaSalida: fechaSalida

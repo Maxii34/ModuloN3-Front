@@ -7,34 +7,41 @@ import "./BusquedaDisponibilidad.css";
 
 const Habitaciones = () => {
   // Estados de filtros visuales
-  const [fechaEntrada, setFechaEntrada] = useState("");
-  const [fechaSalida, setFechaSalida] = useState("");
+  // Estados de filtros visuales
+  const [fechaEntrada, setFechaEntrada] = useState(
+    sessionStorage.getItem("fechaEntrada") || "", // ← NUEVO
+  );
+  const [fechaSalida, setFechaSalida] = useState(
+    sessionStorage.getItem("fechaSalida") || "", // ← NUEVO
+  );
   const [huespedes, setHuespedes] = useState(2);
   const [numHabitaciones, setNumHabitaciones] = useState(1);
 
   // Obtener la fecha de hoy en formato YYYY-MM-DD para el input date
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toISOString().split("T")[0];
 
   // Obtener la fecha mínima de salida (día siguiente a la llegada)
   const getMinCheckOutDate = () => {
     if (!fechaEntrada) return today;
-    
+
     const checkIn = new Date(fechaEntrada);
     checkIn.setDate(checkIn.getDate() + 1);
-    return checkIn.toISOString().split('T')[0];
+    return checkIn.toISOString().split("T")[0];
   };
 
   // Manejar cambio en fecha de llegada
   const handleFechaEntradaChange = (e) => {
     const newFechaEntrada = e.target.value;
     setFechaEntrada(newFechaEntrada);
-    
+    sessionStorage.setItem("fechaEntrada", newFechaEntrada);
+
     // Si la fecha de salida es anterior o igual a la nueva fecha de llegada, resetearla
     if (fechaSalida && newFechaEntrada) {
       const checkOut = new Date(fechaSalida);
       const checkIn = new Date(newFechaEntrada);
       if (checkOut <= checkIn) {
-        setFechaSalida('');
+        setFechaSalida("");
+        sessionStorage.removeItem("fechaSalida");
       }
     }
   };
@@ -42,14 +49,14 @@ const Habitaciones = () => {
   // Estado para ordenar
   const [orden, setOrden] = useState("precio-asc");
 
-  // 2. ESTADO PARA LOS DATOS REALES (Empieza vacío)
+  //ESTADO PARA LOS DATOS REALES (Empieza vacío)
   const [habitaciones, setHabitaciones] = useState([]);
   const [habitacionesFiltradas, setHabitacionesFiltradas] = useState([]);
   const [busquedaRealizada, setBusquedaRealizada] = useState(false);
 
-const habitacionesBack = import.meta.env.VITE_API_HABITACIONES;
+  const habitacionesBack = import.meta.env.VITE_API_HABITACIONES;
 
-  // 3. FUNCIÓN PARA TRAER DATOS DEL BACKEND
+  //FUNCIÓN PARA TRAER DATOS DEL BACKEND
   const obtenerHabitaciones = async () => {
     try {
       const respuesta = await fetch(habitacionesBack);
@@ -82,25 +89,65 @@ const habitacionesBack = import.meta.env.VITE_API_HABITACIONES;
       return;
     }
 
+    // Convertir fechas a objetos Date
+    const fechaEntradaObj = new Date(fechaEntrada);
+    const fechaSalidaObj = new Date(fechaSalida);
+
+    // Validar que fecha de entrada sea anterior a fecha de salida
+    if (fechaEntradaObj >= fechaSalidaObj) {
+      Swal.fire({
+        icon: "error",
+        title: "Fechas inválidas",
+        text: "La fecha de salida debe ser posterior a la fecha de entrada.",
+        confirmButtonText: "Entendido",
+      });
+      return;
+    }
+
     // Filtrar habitaciones según los criterios
     let habitacionesFiltradas = habitaciones.filter((hab) => {
-      // Filtrar por capacidad (huéspedes)
+      //Filtrar por capacidad (huéspedes)
       const cumpleCapacidad = hab.capacidad >= huespedes;
-      
-      // Filtrar por estado (solo disponibles)
-      const estaDisponible = hab.estado?.toLowerCase() === "disponible";
-      
+
+      //Verificar disponibilidad por fechas (NUEVO)
+      let estaDisponible = true;
+
+      if (hab.reservas && hab.reservas.length > 0) {
+        // Verificar si alguna reserva se superpone con las fechas solicitadas
+        const hayConflicto = hab.reservas.some((reserva) => {
+          const reservaEntrada = new Date(reserva.fechaEntrada);
+          const reservaSalida = new Date(reserva.fechaSalida);
+
+          // Normalizar fechas para comparar solo días (sin horas)
+          reservaEntrada.setHours(0, 0, 0, 0);
+          reservaSalida.setHours(0, 0, 0, 0);
+          const entradaTemp = new Date(fechaEntradaObj);
+          const salidaTemp = new Date(fechaSalidaObj);
+          entradaTemp.setHours(0, 0, 0, 0);
+          salidaTemp.setHours(0, 0, 0, 0);
+
+          // Hay conflicto si las fechas se superponen
+          return (
+            (entradaTemp >= reservaEntrada && entradaTemp < reservaSalida) ||
+            (salidaTemp > reservaEntrada && salidaTemp <= reservaSalida) ||
+            (entradaTemp <= reservaEntrada && salidaTemp >= reservaSalida)
+          );
+        });
+
+        estaDisponible = !hayConflicto; // Disponible si NO hay conflicto
+      }
+      // Si no tiene reservas, está disponible
+
       return cumpleCapacidad && estaDisponible;
     });
 
     // Si se requieren múltiples habitaciones, verificar que haya suficientes disponibles
     if (numHabitaciones > 1) {
-      // Si hay menos habitaciones disponibles que las requeridas, mostrar todas las disponibles
       if (habitacionesFiltradas.length < numHabitaciones) {
         Swal.fire({
           icon: "info",
           title: "Disponibilidad limitada",
-          text: `Solo encontramos ${habitacionesFiltradas.length} habitación(es) disponible(s) para ${huespedes} huésped(es).`,
+          text: `Solo encontramos ${habitacionesFiltradas.length} habitación(es) disponible(s) para ${huespedes} huésped(es) en las fechas seleccionadas.`,
           confirmButtonText: "Entendido",
         });
       }
@@ -172,7 +219,10 @@ const habitacionesBack = import.meta.env.VITE_API_HABITACIONES;
               type="date"
               id="salida"
               value={fechaSalida}
-              onChange={(e) => setFechaSalida(e.target.value)}
+              onChange={(e) => {
+                setFechaSalida(e.target.value);
+                sessionStorage.setItem("fechaSalida", e.target.value); // ← AGREGAR
+              }}
               min={getMinCheckOutDate()}
               disabled={!fechaEntrada}
               className="busqueda-form-input busqueda-date-input"
@@ -219,10 +269,7 @@ const habitacionesBack = import.meta.env.VITE_API_HABITACIONES;
           </div>
         </div>
 
-        <button 
-          className="busqueda-button"
-          onClick={filtrarHabitaciones}
-        >
+        <button className="busqueda-button" onClick={filtrarHabitaciones}>
           Ver Disponibilidad
         </button>
       </div>
@@ -263,14 +310,17 @@ const habitacionesBack = import.meta.env.VITE_API_HABITACIONES;
           ) : (
             <CardsHabitacionesPublic
               habitaciones={ordenarHabitaciones(
-                busquedaRealizada ? habitacionesFiltradas : habitaciones
+                busquedaRealizada ? habitacionesFiltradas : habitaciones,
               )}
+              fechaEntrada={fechaEntrada} // ← Debe estar aquí
+              fechaSalida={fechaSalida} // ← Debe estar aquí
             />
           )}
           {busquedaRealizada && habitacionesFiltradas.length > 0 && (
             <div className="text-center mt-3">
               <p className="text-muted">
-                Se encontraron <strong>{habitacionesFiltradas.length}</strong> habitación(es) disponible(s)
+                Se encontraron <strong>{habitacionesFiltradas.length}</strong>{" "}
+                habitación(es) disponible(s)
               </p>
             </div>
           )}

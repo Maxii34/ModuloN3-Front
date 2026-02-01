@@ -7,17 +7,21 @@ import {
   Spinner,
   Alert,
 } from "react-bootstrap";
-// Si no usas esta función, puedes borrar la importación, pero la dejo por si acaso.
-import { asignarHabitacionUsuario } from "../../services/usuariosAPI";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom"; // ← AGREGADO useLocation
 import Swal from "sweetalert2";
 import { useAuth } from "../../context/AuthContext";
 
 function ReservaHabitacion() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation(); // ← NUEVO
+
+  // ← NUEVO: Obtener fechas desde el state de navegación
+  const { fechaEntrada, fechaSalida } = location.state || {};
+
   const [habitacion, setHabitacion] = useState(null);
   const [cargando, setCargando] = useState(true);
+  const [cantidadHuespedes, setCantidadHuespedes] = useState(1); // ← NUEVO
 
   // Obtener usuario para autocompletar
   const { user } = useAuth();
@@ -26,6 +30,21 @@ function ReservaHabitacion() {
   const usuarioActual = user || usuarioStorage;
 
   const habitacionesBack = import.meta.env.VITE_API_HABITACIONES;
+  const reservasBack = import.meta.env.VITE_API_RESERVAS; // ← NUEVO (agregar en .env)
+
+  // ← NUEVO: Validar que existan las fechas
+  useEffect(() => {
+    if (!fechaEntrada || !fechaSalida) {
+      Swal.fire({
+        icon: "warning",
+        title: "Fechas requeridas",
+        text: "Debes seleccionar fechas antes de reservar.",
+        confirmButtonText: "Ir a búsqueda",
+      }).then(() => {
+        navigate("/habitaciones");
+      });
+    }
+  }, [fechaEntrada, fechaSalida, navigate]);
 
   useEffect(() => {
     const cargarDatos = async () => {
@@ -34,6 +53,10 @@ function ReservaHabitacion() {
         if (respuesta.ok) {
           const dato = await respuesta.json();
           setHabitacion(dato);
+          // ← NUEVO: Inicializar huéspedes según capacidad
+          if (dato.capacidad === 1) {
+            setCantidadHuespedes(1);
+          }
         }
       } catch (error) {
         console.error("Error al cargar habitación:", error);
@@ -44,6 +67,17 @@ function ReservaHabitacion() {
     cargarDatos();
   }, [id, habitacionesBack]);
 
+  // ← NUEVO: Calcular cantidad de noches
+  const calcularNoches = () => {
+    if (!fechaEntrada || !fechaSalida) return 1;
+    const entrada = new Date(fechaEntrada);
+    const salida = new Date(fechaSalida);
+    const diferencia = Math.ceil((salida - entrada) / (1000 * 60 * 60 * 24));
+    return diferencia > 0 ? diferencia : 1;
+  };
+
+  const noches = calcularNoches();
+
   const handleConfirmar = async () => {
     try {
       const session = JSON.parse(sessionStorage.getItem("usuarioKey"));
@@ -51,70 +85,87 @@ function ReservaHabitacion() {
       // Verificamos sesión
       if (!session || !session.token) {
         Swal.fire({
-            icon: 'warning',
-            title: 'Inicia Sesión',
-            text: 'Debes estar logueado para realizar una reserva.'
+          icon: "warning",
+          title: "Inicia Sesión",
+          text: "Debes estar logueado para realizar una reserva.",
         });
         return;
       }
 
       const miId = session.usuario.id || session.usuario._id;
 
+      // ← NUEVO: Validar cantidad de huéspedes
+      if (cantidadHuespedes > habitacion.capacidad) {
+        Swal.fire({
+          icon: "error",
+          title: "Capacidad excedida",
+          text: `Esta habitación tiene capacidad para ${habitacion.capacidad} personas máximo.`,
+        });
+        return;
+      }
+
       // Pregunta de confirmación
       const result = await Swal.fire({
         title: "Confirmar Reserva",
-        text: `¿Estás seguro de reservar la habitación ${habitacion?.numero}?`,
+        html: `
+          <p>¿Estás seguro de reservar la habitación ${habitacion?.numero}?</p>
+          <p><strong>Fechas:</strong> ${fechaEntrada} al ${fechaSalida}</p>
+          <p><strong>Huéspedes:</strong> ${cantidadHuespedes}</p>
+        `,
         icon: "question",
         showCancelButton: true,
         confirmButtonColor: "#0d6efd",
         cancelButtonColor: "#6c757d",
-        confirmButtonText: "Sí, pagar ahora",
+        confirmButtonText: "Sí, confirmar reserva",
         cancelButtonText: "Cancelar",
       });
 
       if (result.isConfirmed) {
         // Mostramos loading mientras procesa
         Swal.fire({
-            title: 'Procesando...',
-            didOpen: () => Swal.showLoading()
+          title: "Procesando reserva...",
+          didOpen: () => Swal.showLoading(),
         });
 
-        const habitacionActualizada = { 
-            ...habitacion, 
-            estado: "reservada",
-            usuario: miId
-        };
-
-        const respuestaEstado = await fetch(
-          `${habitacionesBack}/${id}`,
+        // ← MODIFICADO: Ahora usamos POST /api/reservas
+        const respuestaReserva = await fetch(
+          `${reservasBack || habitacionesBack.replace("/habitaciones", "/reservas")}`,
           {
-            method: "PUT",
+            method: "POST",
             headers: {
               "Content-Type": "application/json",
               "x-token": session.token,
             },
-            body: JSON.stringify(habitacionActualizada),
-          }
+            body: JSON.stringify({
+              habitacion: id, // ← Sin "Id"
+              usuario: miId, // ← Sin "Id"
+              fechaEntrada: fechaEntrada,
+              fechaSalida: fechaSalida,
+              cantidadHuespedes: cantidadHuespedes,
+            }),
+          },
         );
 
-        if (!respuestaEstado.ok) {
-           throw new Error("Error al guardar la reserva en la base de datos.");
-        }
+        const dataReserva = await respuestaReserva.json();
 
-        // Asignar la habitación al usuario
-        await asignarHabitacionUsuario(miId, id, session.token);
+        if (!respuestaReserva.ok) {
+          throw new Error(dataReserva.error || "Error al crear la reserva");
+        }
 
         // Si todo salió bien:
         await Swal.fire({
           icon: "success",
           title: "¡Reserva Exitosa!",
-          text: "La habitación ha sido asignada correctamente a tu cuenta.",
+          html: `
+            <p>Tu reserva ha sido confirmada.</p>
+            <p><strong>Habitación:</strong> ${habitacion.numero}</p>
+            <p><strong>Fechas:</strong> ${fechaEntrada} al ${fechaSalida}</p>
+          `,
         });
-        
-        // Redirigimos a la página de inicio o a mis reservas
+
+        // Redirigimos a mis reservas o inicio
         navigate("/");
       }
-
     } catch (error) {
       console.error(error);
       Swal.fire({
@@ -142,7 +193,7 @@ function ReservaHabitacion() {
     );
   }
 
-  const precioBase = habitacion.precio || 0;
+  const precioBase = (habitacion.precio || 0) * noches; // ← MODIFICADO: multiplicar por noches
   const impuestos = precioBase * 0.02;
   const total = precioBase + impuestos;
 
@@ -189,7 +240,42 @@ function ReservaHabitacion() {
               className="p-2"
             />
           </Form.Group>
+
+          {/* ← NUEVO: Campo de huéspedes */}
+          <Form.Group className="mb-4">
+            <Form.Label className="fw-normal text-muted">
+              Cantidad de Huéspedes
+            </Form.Label>
+            <Form.Control
+              type="number"
+              min="1"
+              max={habitacion.capacidad}
+              value={cantidadHuespedes}
+              onChange={(e) => setCantidadHuespedes(parseInt(e.target.value))}
+              className="p-2"
+            />
+            <Form.Text className="text-muted">
+              Capacidad máxima: {habitacion.capacidad} personas
+            </Form.Text>
+          </Form.Group>
         </Form>
+      </div>
+
+      {/* ← NUEVO: Mostrar fechas seleccionadas */}
+      <div className="p-4 mb-4 rounded border shadow-sm bg-white">
+        <h5 className="fw-bold mb-3">Detalles de tu Reserva</h5>
+        <div className="d-flex justify-content-between mb-2">
+          <span className="text-muted">Entrada:</span>
+          <span className="fw-semibold">{fechaEntrada}</span>
+        </div>
+        <div className="d-flex justify-content-between mb-2">
+          <span className="text-muted">Salida:</span>
+          <span className="fw-semibold">{fechaSalida}</span>
+        </div>
+        <div className="d-flex justify-content-between">
+          <span className="text-muted">Noches:</span>
+          <span className="fw-semibold">{noches}</span>
+        </div>
       </div>
 
       <div className="p-4 rounded border shadow-sm">
@@ -231,7 +317,9 @@ function ReservaHabitacion() {
 
         <ListGroup variant="flush" className="mb-4">
           <ListGroup.Item className="d-flex justify-content-between bg-white border-0 py-2">
-            <span className="text-secondary">Alojamiento (1 Noche)</span>
+            <span className="text-secondary">
+              Alojamiento ({noches} {noches === 1 ? "Noche" : "Noches"})
+            </span>
             <span>${precioBase.toLocaleString()}</span>
           </ListGroup.Item>
           <ListGroup.Item className="d-flex justify-content-between">
@@ -254,7 +342,7 @@ function ReservaHabitacion() {
             className="w-100 fw-bold"
             onClick={handleConfirmar}
           >
-            CONFIRMAR PAGO
+            CONFIRMAR RESERVA
           </Button>
         </div>
       </div>

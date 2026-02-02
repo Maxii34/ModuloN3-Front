@@ -1,26 +1,45 @@
 import { Card, Button, Col, Row } from "react-bootstrap";
-import { useNavigate } from "react-router-dom"; // Importamos el hook de navegación
-import Swal from "sweetalert2"; // Importamos las alertas
+import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import { useAuth } from "../../../context/AuthContext"; // Importamos el contexto
+import { useAuth } from "../../../context/AuthContext";
 
-// Si lograste pasar la prop loginShow desde el padre, la recibes aquí. 
-// Si no, puedes borrar ", loginShow" y funcionará solo con el alerta.
-const CardsHabitacionesPublic = ({ habitaciones, loginShow }) => {
+const CardsHabitacionesPublic = ({
+  habitaciones,
+  loginShow,
+  fechaEntrada,
+  fechaSalida,
+}) => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
   const handleReservarClick = (idHabitacion) => {
-    // 1. Verificamos si hay usuario logueado (Contexto o Storage)
+    // 1. Verificamos si hay usuario logueado
     const usuarioStorage = JSON.parse(sessionStorage.getItem("usuarioKey"));
 
     if (user || (usuarioStorage && usuarioStorage.token)) {
-      // === ESCENARIO 1: USUARIO LOGUEADO ===
-      // Si está logueado, lo dejamos pasar al detalle
-      navigate(`/detalle/${idHabitacion}`);
+      // USUARIO LOGUEADO ===
+
+      //Verificar que haya fechas seleccionadas
+      if (!fechaEntrada || !fechaSalida) {
+        Swal.fire({
+          icon: "warning",
+          title: "Fechas requeridas",
+          text: "Por favor, selecciona las fechas de llegada y salida antes de reservar.",
+          confirmButtonText: "Entendido",
+        });
+        return;
+      }
+
+      // Navegar pasando las fechas en el state
+      navigate(`/reserva/${idHabitacion}`, {
+        state: {
+          fechaEntrada: fechaEntrada,
+          fechaSalida: fechaSalida,
+        },
+      });
     } else {
       // === ESCENARIO 2: NO LOGUEADO ===
-      // Mostramos el mensaje de que no puede reservar
       Swal.fire({
         title: "Acceso Restringido",
         text: "Para reservar una habitación, necesitas iniciar sesión o registrarte primero.",
@@ -29,7 +48,6 @@ const CardsHabitacionesPublic = ({ habitaciones, loginShow }) => {
         confirmButtonColor: "#3085d6",
       }).then((result) => {
         if (result.isConfirmed) {
-          // Si tienes la función para abrir el modal, la ejecutamos
           if (loginShow) {
             loginShow();
           }
@@ -52,19 +70,35 @@ const CardsHabitacionesPublic = ({ habitaciones, loginShow }) => {
                   "https://via.placeholder.com/300x200?text=Sin+Imagen";
               }}
             />
-            <Card.Body>
-              <h5 className="fw-bold text-capitalize">{hab.tipo}</h5>
-              <p className="text-muted small mb-2">
-                Hab. {hab.numero} - {hab.capacidad} Huéspedes
+            <Card.Body className="d-flex flex-column p-4">
+              {/* Encabezado con badge o etiqueta de tipo */}
+              <div className="d-flex justify-content-between align-items-start mb-2">
+                <h5 className="fw-bold text-capitalize mb-0">{hab.tipo}</h5>
+                <span className="badge bg-light text-dark border">
+                  № {hab.numero}
+                </span>
+              </div>
+
+              {/* Detalles con iconos de texto o separación clara */}
+              <p className="text-muted small mb-3">
+                <i className="bi bi-people me-1"></i> {hab.capacidad} Huéspedes
               </p>
-              <p className="fw-bold fs-4 text-primary mb-0">${hab.precio}</p>
+
+              {/* Precio destacado con "por noche" */}
+              <div className="mt-auto">
+                <p className="mb-0">
+                  <span className="fw-bold fs-3 text-primary">
+                    ${hab.precio}
+                  </span>
+                  <span className="text-muted small"> / noche</span>
+                </p>
+              </div>
             </Card.Body>
 
-            <Card.Footer className="bg-white border-0 pb-3">
-              {/* CAMBIO: Usamos Button en lugar de Link */}
+            <Card.Footer className="bg-white border-0 px-4 pb-4">
               <Button
                 variant="dark"
-                className="w-100 py-2 rounded-3"
+                className="w-100 py-2 fw-bold shadow-sm rounded-3"
                 onClick={() => handleReservarClick(hab._id || hab.id)}
               >
                 Reservar Ahora

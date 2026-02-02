@@ -9,7 +9,7 @@ const CardsHabitaciones = ({
   return (
     <Row className="g-4">
       {habitaciones.map((hab) => (
-        <Col md={6} key={hab._id || hab.id}>
+        <Col md={3} key={hab._id || hab.id}>
           <Card className="h-100 shadow-sm card-room">
             <Card.Img
               variant="top"
@@ -40,7 +40,7 @@ const CardsHabitaciones = ({
               <Card.Text className="fw-bold">${hab.precio} / noche</Card.Text>
             </Card.Body>
 
-            <Card.Footer className="d-flex justify-content-between bg-white border-top-0 pb-3">
+            <Card.Footer className="d-flex justify-content-between bg-white border-top-0 pb-3 gap-1">
               <Button
                 variant="primary"
                 className="btn-room"

@@ -9,22 +9,23 @@ import {
   Spinner,
 } from "react-bootstrap";
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useLocation } from "react-router-dom";
 
 const DetalleHabitacion = () => {
   const { id } = useParams();
+  const location = useLocation(); 
   const [habitacion, setHabitacion] = useState(null);
   const [cargando, setCargando] = useState(true);
 
-  const habitacionesBack = import.meta.env.VITE_API_HABITACIONES;
+  //Obtiene fechas del estado de la navegación
+  const { fechaEntrada, fechaSalida } = location.state || {};
 
+  const habitacionesBack = import.meta.env.VITE_API_HABITACIONES;
 
   useEffect(() => {
     const cargarDetalle = async () => {
       try {
-        const respuesta = await fetch(
-          `${habitacionesBack}/${id}`
-        );
+        const respuesta = await fetch(`${habitacionesBack}/${id}`);
         if (respuesta.ok) {
           const dato = await respuesta.json();
           setHabitacion(dato);
@@ -39,7 +40,7 @@ const DetalleHabitacion = () => {
     };
 
     cargarDetalle();
-  }, [id]);
+  }, [id, habitacionesBack]); 
 
   if (cargando) {
     return (
@@ -166,6 +167,7 @@ const DetalleHabitacion = () => {
                 <Link
                   to={`/reserva/${habitacion._id || habitacion.id}`}
                   className="d-grid text-decoration-none"
+                  state={{ fechaEntrada, fechaSalida }} // ← MODIFICADO
                 >
                   <Button variant="dark" size="lg" className="w-100">
                     Continuar con la Reserva
@@ -189,5 +191,6 @@ const DetalleHabitacion = () => {
     </Container>
   );
 };
+
 
 export default DetalleHabitacion;

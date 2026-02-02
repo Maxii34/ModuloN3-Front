@@ -35,7 +35,7 @@ const MiReserva = () => {
           title: "Sesión requerida",
           text: "Debes iniciar sesión para ver tus reservas",
         }).then(() => {
-          navigate("/login"); 
+          navigate("/login");
         });
         return;
       }
@@ -126,6 +126,9 @@ const MiReserva = () => {
         icon: "success",
         title: "¡Cancelada!",
         text: result.mensaje || "Tu reserva ha sido cancelada exitosamente.",
+        timer: 1500,
+        timerProgressBar: true,
+        showConfirmButton: false,
       });
     } catch (error) {
       console.error("Error al cancelar:", error);

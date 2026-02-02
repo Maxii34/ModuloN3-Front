@@ -15,11 +15,7 @@ const AdminNavbar = ({ onLogout, setUsuarioLogueado }) => {
 
   const menuItems = [
     { path: "/admin-habitaciones", label: "Habitaciones", icon: FaBed },
-    {
-      label: "Agregar",
-      icon: FaFolderPlus,
-      action: handleShow, 
-    },
+    { path: "/admin-habitaciones", label: "Agregar Habitación", icon: FaFolderPlus, action: handleShow},
     { path: "/admin-usuarios", label: "Usuarios", icon: FaUsers },
   ];
 
@@ -48,12 +44,21 @@ const AdminNavbar = ({ onLogout, setUsuarioLogueado }) => {
 
             // Si tiene path, renderizamos un Link (Navegación)
             if (item.path) {
-              const isActive = location.pathname === item.path;
+              const isActive = location.pathname === item.path && !item.action;
+              
+              const handleClick = (e) => {
+                if (item.action) {
+                  e.preventDefault();
+                  item.action();
+                }
+              };
+
               return (
                 <Link
                   key={index}
                   to={item.path}
                   className={`admin-navbar-item ${isActive ? "active" : ""}`}
+                  onClick={handleClick}
                 >
                   <Icon className="admin-navbar-icon" />
                   <span className="admin-navbar-label">{item.label}</span>

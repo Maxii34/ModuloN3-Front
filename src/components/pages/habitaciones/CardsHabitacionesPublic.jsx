@@ -4,7 +4,12 @@ import Swal from "sweetalert2";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { useAuth } from "../../../context/AuthContext";
 
-const CardsHabitacionesPublic = ({ habitaciones, loginShow, fechaEntrada, fechaSalida }) => {
+const CardsHabitacionesPublic = ({
+  habitaciones,
+  loginShow,
+  fechaEntrada,
+  fechaSalida,
+}) => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -14,7 +19,7 @@ const CardsHabitacionesPublic = ({ habitaciones, loginShow, fechaEntrada, fechaS
 
     if (user || (usuarioStorage && usuarioStorage.token)) {
       // USUARIO LOGUEADO ===
-      
+
       //Verificar que haya fechas seleccionadas
       if (!fechaEntrada || !fechaSalida) {
         Swal.fire({
@@ -30,10 +35,9 @@ const CardsHabitacionesPublic = ({ habitaciones, loginShow, fechaEntrada, fechaS
       navigate(`/reserva/${idHabitacion}`, {
         state: {
           fechaEntrada: fechaEntrada,
-          fechaSalida: fechaSalida
-        }
+          fechaSalida: fechaSalida,
+        },
       });
-      
     } else {
       // === ESCENARIO 2: NO LOGUEADO ===
       Swal.fire({
@@ -66,18 +70,35 @@ const CardsHabitacionesPublic = ({ habitaciones, loginShow, fechaEntrada, fechaS
                   "https://via.placeholder.com/300x200?text=Sin+Imagen";
               }}
             />
-            <Card.Body>
-              <h5 className="fw-bold text-capitalize">{hab.tipo}</h5>
-              <p className="text-muted small mb-2">
-                Hab. {hab.numero} - {hab.capacidad} Huéspedes
+            <Card.Body className="d-flex flex-column p-4">
+              {/* Encabezado con badge o etiqueta de tipo */}
+              <div className="d-flex justify-content-between align-items-start mb-2">
+                <h5 className="fw-bold text-capitalize mb-0">{hab.tipo}</h5>
+                <span className="badge bg-light text-dark border">
+                  № {hab.numero}
+                </span>
+              </div>
+
+              {/* Detalles con iconos de texto o separación clara */}
+              <p className="text-muted small mb-3">
+                <i className="bi bi-people me-1"></i> {hab.capacidad} Huéspedes
               </p>
-              <p className="fw-bold fs-4 text-primary mb-0">${hab.precio}</p>
+
+              {/* Precio destacado con "por noche" */}
+              <div className="mt-auto">
+                <p className="mb-0">
+                  <span className="fw-bold fs-3 text-primary">
+                    ${hab.precio}
+                  </span>
+                  <span className="text-muted small"> / noche</span>
+                </p>
+              </div>
             </Card.Body>
 
-            <Card.Footer className="bg-white border-0 pb-3">
+            <Card.Footer className="bg-white border-0 px-4 pb-4">
               <Button
                 variant="dark"
-                className="w-100 py-2 rounded-3"
+                className="w-100 py-2 fw-bold shadow-sm rounded-3"
                 onClick={() => handleReservarClick(hab._id || hab.id)}
               >
                 Reservar Ahora

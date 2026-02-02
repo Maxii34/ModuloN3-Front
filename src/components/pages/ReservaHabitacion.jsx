@@ -159,9 +159,7 @@ function ReservaHabitacion() {
             <p><strong>Fechas:</strong> ${fechaEntrada} al ${fechaSalida}</p>
           `,
         });
-
-        // Redirigimos a mis reservas o inicio
-        navigate("/");
+        navigate("/mi-reserva");
       }
     } catch (error) {
       console.error(error);

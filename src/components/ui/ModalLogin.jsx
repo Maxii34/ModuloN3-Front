@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router";
 import { iniciarSesion } from "../helpers/queries";
 import Swal from "sweetalert2";
-import { useAuth } from "../../context/AuthContext"; 
+import { useAuth } from "../../context/AuthContext";
 
 export const ModalLogin = ({
   showLogin,
@@ -51,9 +51,9 @@ export const ModalLogin = ({
 
         // Actualiza el AuthContext según el tipo de usuario
         if (datos.usuario.tipo === "admin") {
-          loginAdmin(usuarioData); 
+          loginAdmin(usuarioData);
         } else if (datos.usuario.tipo === "usuario") {
-          loginUser(usuarioData); 
+          loginUser(usuarioData);
         }
 
         loginClose();
@@ -63,9 +63,11 @@ export const ModalLogin = ({
           title: `¡Bienvenido, ${datos.usuario.nombre}!`,
           text: "Has iniciado sesión correctamente.",
           icon: "success",
-          timer: 2000,
-          showConfirmButton: false,
+          timer: 5000,
           timerProgressBar: true,
+          showConfirmButton: false,
+          toast: true,
+          position: "top-end",
         });
 
         // Redirige según el tipo

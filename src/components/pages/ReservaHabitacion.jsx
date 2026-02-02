@@ -14,7 +14,7 @@ import { useAuth } from "../../context/AuthContext";
 function ReservaHabitacion() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const location = useLocation(); 
+  const location = useLocation();
 
   const { fechaEntrada, fechaSalida } = location.state || {};
   const [habitacion, setHabitacion] = useState(null);
@@ -134,8 +134,8 @@ function ReservaHabitacion() {
               "x-token": session.token,
             },
             body: JSON.stringify({
-              habitacion: id, 
-              usuario: miId, 
+              habitacion: id,
+              usuario: miId,
               fechaEntrada: fechaEntrada,
               fechaSalida: fechaSalida,
               cantidadHuespedes: cantidadHuespedes,
@@ -148,7 +148,7 @@ function ReservaHabitacion() {
         if (!respuestaReserva.ok) {
           throw new Error(dataReserva.error || "Error al crear la reserva");
         }
-
+        navigate("/mi-reserva");
         // Si todo salió bien:
         await Swal.fire({
           icon: "success",
@@ -158,8 +158,22 @@ function ReservaHabitacion() {
             <p><strong>Habitación:</strong> ${habitacion.numero}</p>
             <p><strong>Fechas:</strong> ${fechaEntrada} al ${fechaSalida}</p>
           `,
+          timer: 5000,
+          timerProgressBar: true,
+          showConfirmButton: false,
+          toast: true,
+          position: "top-end",
         });
-        navigate("/mi-reserva");
+        await Swal.fire({
+          title: `¡Reserva Confirmada!`,
+          text: "Los datos de tu reserva, se te han enviado por correo.",
+          icon: "success",
+          timer: 6000,
+          timerProgressBar: true,
+          showConfirmButton: false,
+          toast: true,
+          position: "top-end",
+        });
       }
     } catch (error) {
       console.error(error);
@@ -188,7 +202,7 @@ function ReservaHabitacion() {
     );
   }
 
-  const precioBase = (habitacion.precio || 0) * noches; 
+  const precioBase = (habitacion.precio || 0) * noches;
   const impuestos = precioBase * 0.02;
   const total = precioBase + impuestos;
 

@@ -40,7 +40,9 @@ const AdminNavbar = ({ onLogout, setUsuarioLogueado, onHabitacionCreada }) => {
           <div className="admin-navbar-logo">
             <img src="/foto/LogoFinal.png" alt="Logo" />
           </div>
-          <p className="admin-navbar-subtitle text-center fs-4">Panel Administrativo</p>
+          <p className="admin-navbar-subtitle text-center fs-4">
+            Panel Administrativo
+          </p>
         </div>
 
         <div className="admin-navbar-menu">

@@ -22,7 +22,7 @@ export const ModalHabitacionForm = ({ show, onHide, onHabitacionCreada }) => {
         imagen: data.imagen,
         capacidad: parseInt(data.capacidad),
         piso: parseInt(data.piso),
-        metros: parseInt(data.metrosCuadrados),
+        metros: parseInt(data.metros),
         caracteristicas: data.caracteristicas,
         descripcion: data.descripcion,
       };
@@ -54,11 +54,16 @@ export const ModalHabitacionForm = ({ show, onHide, onHabitacionCreada }) => {
           title: "¡Creada!",
           text: "La habitación se guardó correctamente",
           icon: "success",
+          timer: 2500,
+          timerProgressBar: true,
+          showConfirmButton: false,
+          toast: true,
+          position: "top-end",
         });
         reset();
-        onHide(); // Cerrar el modal
+        //onHide(); // Cerrar el modal
         if (onHabitacionCreada) {
-          onHabitacionCreada(); 
+          onHabitacionCreada();
         }
       } else if (respuesta) {
         const mensaje =
@@ -215,7 +220,7 @@ export const ModalHabitacionForm = ({ show, onHide, onHabitacionCreada }) => {
                 <Form.Control
                   type="number"
                   placeholder="m²"
-                  {...register("metrosCuadrados", {
+                  {...register("metros", {
                     required: "Los metros cuadrados son obligatorios",
                     min: { value: 1, message: "Debe ser mayor a 0" },
                   })}

@@ -50,7 +50,16 @@ const AdminHabitaciones = () => {
           setHabitaciones(
             habitaciones.filter((hab) => (hab._id || hab.id) !== id),
           );
-          Swal.fire("¡Eliminado!", "La habitación fue eliminada.", "success");
+          Swal.fire({
+            title: "¡Eliminado!",
+            text: "La habitación fue eliminada correctamente.",
+            icon: "success",
+            timer: 2000,
+            timerProgressBar: true,
+            showConfirmButton: false,
+            toast: true,
+            position: "top-end",
+          });
         } else {
           Swal.fire(
             "Error",
@@ -76,13 +85,17 @@ const AdminHabitaciones = () => {
     <Container className="my-5">
       <Row className="mb-4">
         <Col>
-          <h2 className="fw-bold display-6 text-center mb-2">Administración de Habitaciones</h2>
+          <h2 className="fw-bold display-6 text-center mb-2">
+            Administración de Habitaciones
+          </h2>
         </Col>
       </Row>
 
       <Row>
         <Col md={4} lg={12} className="p-4 border rounded bg-white">
-          <h3 className="mb-4 fw-bold text-center text-muted">Habitaciones Existentes</h3>
+          <h3 className="mb-4 fw-bold text-center text-muted">
+            Habitaciones Existentes
+          </h3>
           {habitaciones.length > 0 ? (
             <CardsHabitaciones
               habitaciones={habitaciones}

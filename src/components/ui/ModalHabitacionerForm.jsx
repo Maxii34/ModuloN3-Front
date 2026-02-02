@@ -58,7 +58,7 @@ export const ModalHabitacionForm = ({ show, onHide, onHabitacionCreada }) => {
         reset();
         onHide(); // Cerrar el modal
         if (onHabitacionCreada) {
-          onHabitacionCreada(); // Actualizar la lista de habitaciones
+          onHabitacionCreada(); 
         }
       } else if (respuesta) {
         const mensaje =

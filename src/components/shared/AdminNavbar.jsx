@@ -5,14 +5,21 @@ import {
   FaUsers,
   FaSignOutAlt,
   FaShoppingBag,
+  FaFolderPlus
 } from "react-icons/fa";
 
-const AdminNavbar = ({ onLogout, setUsuarioLogueado }) => {
+// Agregamos onOpenModal a los props (o define tu función dentro si prefieres)
+const AdminNavbar = ({ onLogout, setUsuarioLogueado, onOpenModal }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
   const menuItems = [
     { path: "/admin-habitaciones", label: "Habitaciones", icon: FaBed },
+    { 
+      label: "Agregar Habitación", 
+      icon: FaFolderPlus, 
+      action: onOpenModal || (() => console.log("Abriendo modal...")) 
+    },
     { path: "/admin-usuarios", label: "Usuarios", icon: FaUsers },
   ];
 
@@ -35,20 +42,37 @@ const AdminNavbar = ({ onLogout, setUsuarioLogueado }) => {
       </div>
 
       <div className="admin-navbar-menu">
-        {menuItems.map((item) => {
+        {menuItems.map((item, index) => {
           const Icon = item.icon;
-          const isActive = location.pathname === item.path;
-
-          return (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`admin-navbar-item ${isActive ? "active" : ""}`}
-            >
-              <Icon className="admin-navbar-icon" />
-              <span className="admin-navbar-label">{item.label}</span>
-            </Link>
-          );
+          
+          // Lógica condicional:
+          // Si tiene "path", usamos Link. Si no, usamos button.
+          if (item.path) {
+            const isActive = location.pathname === item.path;
+            return (
+              <Link
+                key={index} // Usamos index o item.path como key
+                to={item.path}
+                className={`admin-navbar-item ${isActive ? "active" : ""}`}
+              >
+                <Icon className="admin-navbar-icon" />
+                <span className="admin-navbar-label">{item.label}</span>
+              </Link>
+            );
+          } else {
+            // Renderizado del botón para el Modal
+            return (
+              <button
+                key={index}
+                onClick={item.action} // Ejecuta la función del modal
+                className="admin-navbar-item" // Usamos la MISMA clase para mantener el estilo
+                style={{ background: 'none', border: 'none', width: '100%', cursor: 'pointer', textAlign: 'left' }} // Ajustes inline para que parezca link
+              >
+                <Icon className="admin-navbar-icon" />
+                <span className="admin-navbar-label">{item.label}</span>
+              </button>
+            );
+          }
         })}
       </div>
 

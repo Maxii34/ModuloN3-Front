@@ -63,7 +63,7 @@ export const ModalLogin = ({
           title: `¡Bienvenido, ${datos.usuario.nombre}!`,
           text: "Has iniciado sesión correctamente.",
           icon: "success",
-          timer: 5000,
+          timer: 2000,
           timerProgressBar: true,
           showConfirmButton: false,
           toast: true,

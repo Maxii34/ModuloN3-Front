@@ -6,6 +6,8 @@ import {
   ListGroup,
   Spinner,
   Alert,
+  Row,
+  Col,
 } from "react-bootstrap";
 import { useParams, useNavigate, useLocation } from "react-router-dom"; // ← AGREGADO useLocation
 import Swal from "sweetalert2";
@@ -207,154 +209,153 @@ function ReservaHabitacion() {
   const total = precioBase + impuestos;
 
   return (
-    <Container className="py-5" style={{ maxWidth: "650px" }}>
+    <Container className="py-5">
       <h1 className="mb-1 fw-bold text-center">Checkout de Reserva</h1>
       <p className="text-secondary text-center mb-5">
         Completa tu información para asegurar tu habitación.
       </p>
 
-      {/* === SECCIÓN 1: Formulario === */}
-      <div className="p-4 mb-4 bg-light rounded shadow-sm">
-        <h3 className="mb-3 border-bottom pb-2">1. Tu Contacto</h3>
-        <Form>
-          <Form.Group className="mb-3">
-            <Form.Label className="fw-normal text-muted">
-              Nombre Completo
-            </Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Tu Nombre"
-              className="p-2"
-              defaultValue={usuarioActual.nombre}
-              readOnly
-            />
-          </Form.Group>
-          <Form.Group className="mb-3">
-            <Form.Label className="fw-normal text-muted">
-              Correo Electrónico
-            </Form.Label>
-            <Form.Control
-              type="email"
-              placeholder="ejemplo@correo.com"
-              className="p-2"
-              defaultValue={usuarioActual.email}
-              readOnly
-            />
-          </Form.Group>
-          <Form.Group className="mb-4">
-            <Form.Label className="fw-normal text-muted">Teléfono</Form.Label>
-            <Form.Control
-              type="tel"
-              placeholder="+XX XXX XXX XXXX"
-              className="p-2"
-            />
-          </Form.Group>
-
-          {/* ← NUEVO: Campo de huéspedes */}
-          <Form.Group className="mb-4">
-            <Form.Label className="fw-normal text-muted">
-              Cantidad de Huéspedes
-            </Form.Label>
-            <Form.Control
-              type="number"
-              min="1"
-              max={habitacion.capacidad}
-              value={cantidadHuespedes}
-              onChange={(e) => setCantidadHuespedes(parseInt(e.target.value))}
-              className="p-2"
-            />
-            <Form.Text className="text-muted">
-              Capacidad máxima: {habitacion.capacidad} personas
-            </Form.Text>
-          </Form.Group>
-        </Form>
-      </div>
-
-      {/* ← NUEVO: Mostrar fechas seleccionadas */}
-      <div className="p-4 mb-4 rounded border shadow-sm bg-white">
-        <h5 className="fw-bold mb-3">Detalles de tu Reserva</h5>
-        <div className="d-flex justify-content-between mb-2">
-          <span className="text-muted">Entrada:</span>
-          <span className="fw-semibold">{fechaEntrada}</span>
-        </div>
-        <div className="d-flex justify-content-between mb-2">
-          <span className="text-muted">Salida:</span>
-          <span className="fw-semibold">{fechaSalida}</span>
-        </div>
-        <div className="d-flex justify-content-between">
-          <span className="text-muted">Noches:</span>
-          <span className="fw-semibold">{noches}</span>
-        </div>
-      </div>
-
-      <div className="p-4 rounded border shadow-sm">
-        <h5 className="fw-bold">
-          {habitacion.tipo} – Habitación {habitacion.numero}
-        </h5>
-      </div>
-
-      <hr className="my-5" />
-
-      {/* === SECCIÓN 2: Resumen === */}
-      <div className="p-4 rounded bg-white border shadow-sm">
-        <div className="mb-4 border-bottom pb-3">
-          <div
-            className="w-100 mb-2 rounded overflow-hidden"
-            style={{ maxHeight: "150px" }}
-          >
-            <img
-              src={
-                habitacion.imagenes ||
-                habitacion.imagen ||
-                "https://via.placeholder.com/800x400"
-              }
-              alt={habitacion.tipo}
-              className="w-100 h-100"
-              style={{ objectFit: "cover" }}
-              onError={(e) => {
-                e.target.src =
-                  "https://via.placeholder.com/800x400?text=Sin+Imagen";
-              }}
-            />
-          </div>
-          <h5 className="fw-bold mt-2 text-capitalize">
-            {habitacion.tipo} - Habitación {habitacion.numero}
-          </h5>
-        </div>
-
-        <h4 className="mb-3">Desglose de Costos</h4>
-
-        <ListGroup variant="flush" className="mb-4">
-          <ListGroup.Item className="d-flex justify-content-between bg-white border-0 py-2">
-            <span className="text-secondary">
-              Alojamiento ({noches} {noches === 1 ? "Noche" : "Noches"})
-            </span>
-            <span>${precioBase.toLocaleString()}</span>
-          </ListGroup.Item>
-          <ListGroup.Item className="d-flex justify-content-between">
-            <span>Impuestos (2%)</span>
-            <span>${impuestos.toFixed(2)}</span>
-          </ListGroup.Item>
-        </ListGroup>
-
-        <div className="pt-3 border-top mt-4">
-          <div className="d-flex justify-content-between align-items-center mb-3">
-            <span className="h5 fw-bold text-dark">TOTAL FINAL:</span>
-            <span className="h4 fw-bold text-primary">
-              ${total.toLocaleString()}
-            </span>
+      <Row className="g-5">
+        {/* === Columna Izquierda: Formulario y Detalles === */}
+        <Col md={7}>
+          <div className="p-4 mb-4 bg-light rounded shadow-sm">
+            <h3 className="mb-3 border-bottom pb-2">1. Tu Contacto</h3>
+            <Form>
+              <Form.Group className="mb-3">
+                <Form.Label className="fw-normal text-muted">
+                  Nombre Completo
+                </Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Tu Nombre"
+                  className="p-2"
+                  defaultValue={usuarioActual.nombre}
+                  readOnly
+                />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label className="fw-normal text-muted">
+                  Correo Electrónico
+                </Form.Label>
+                <Form.Control
+                  type="email"
+                  placeholder="ejemplo@correo.com"
+                  className="p-2"
+                  defaultValue={usuarioActual.email}
+                  readOnly
+                />
+              </Form.Group>
+              <Form.Group className="mb-4">
+                <Form.Label className="fw-normal text-muted">
+                  Teléfono
+                </Form.Label>
+                <Form.Control
+                  type="tel"
+                  placeholder="+XX XXX XXX XXXX"
+                  className="p-2"
+                />
+              </Form.Group>
+              <Form.Group className="mb-4">
+                <Form.Label className="fw-normal text-muted">
+                  Cantidad de Huéspedes
+                </Form.Label>
+                <Form.Control
+                  type="number"
+                  min="1"
+                  max={habitacion.capacidad}
+                  value={cantidadHuespedes}
+                  onChange={(e) =>
+                    setCantidadHuespedes(parseInt(e.target.value))
+                  }
+                  className="p-2"
+                />
+                <Form.Text className="text-muted">
+                  Capacidad máxima: {habitacion.capacidad} personas
+                </Form.Text>
+              </Form.Group>
+            </Form>
           </div>
 
-          <Button
-            variant="dark"
-            size="lg"
-            className="w-100 fw-bold"
-            onClick={handleConfirmar}
-          >
-            CONFIRMAR RESERVA
-          </Button>
-        </div>
-      </div>
+          <div className="p-4 rounded border shadow-sm bg-white">
+            <h5 className="fw-bold mb-3">Detalles de tu Reserva</h5>
+            <div className="d-flex justify-content-between mb-2">
+              <span className="text-muted">Entrada:</span>
+              <span className="fw-semibold">{fechaEntrada}</span>
+            </div>
+            <div className="d-flex justify-content-between mb-2">
+              <span className="text-muted">Salida:</span>
+              <span className="fw-semibold">{fechaSalida}</span>
+            </div>
+            <div className="d-flex justify-content-between">
+              <span className="text-muted">Noches:</span>
+              <span className="fw-semibold">{noches}</span>
+            </div>
+          </div>
+        </Col>
+
+        {/* === Columna Derecha: Resumen de la Reserva === */}
+        <Col md={5}>
+          <div className="p-4 rounded bg-white border shadow-sm">
+            <div className="mb-4 border-bottom pb-3">
+              <div
+                className="w-100 mb-2 rounded overflow-hidden"
+                style={{ maxHeight: "180px" }}
+              >
+                <img
+                  src={
+                    habitacion.imagenes ||
+                    habitacion.imagen ||
+                    "https://via.placeholder.com/800x400"
+                  }
+                  alt={habitacion.tipo}
+                  className="w-100 h-100"
+                  style={{ objectFit: "cover" }}
+                  onError={(e) => {
+                    e.target.src =
+                      "https://via.placeholder.com/800x400?text=Sin+Imagen";
+                  }}
+                />
+              </div>
+              <h5 className="fw-bold mt-2 text-capitalize">
+                {habitacion.tipo} - Habitación {habitacion.numero}
+              </h5>
+            </div>
+
+            <h4 className="mb-3">Desglose de Costos</h4>
+
+            <ListGroup variant="flush" className="mb-4">
+              <ListGroup.Item className="d-flex justify-content-between bg-transparent border-0 px-0 py-2">
+                <span className="text-secondary">
+                  Alojamiento ({noches} {noches === 1 ? "Noche" : "Noches"})
+                </span>
+                <span>${precioBase.toLocaleString()}</span>
+              </ListGroup.Item>
+              <ListGroup.Item className="d-flex justify-content-between bg-transparent border-0 px-0 py-2">
+                <span>Impuestos (2%)</span>
+                <span>${impuestos.toFixed(2)}</span>
+              </ListGroup.Item>
+            </ListGroup>
+
+            <div className="pt-3 border-top mt-3">
+              <div className="d-flex justify-content-between align-items-center mb-3">
+                <span className="h5 fw-bold text-dark">TOTAL FINAL:</span>
+                <span className="h4 fw-bold text-primary">
+                  ${total.toLocaleString()}
+                </span>
+              </div>
+
+              <Button
+                variant="dark"
+                size="lg"
+                className="w-100 fw-bold"
+                onClick={handleConfirmar}
+              >
+                CONFIRMAR RESERVA
+              </Button>
+            </div>
+          </div>
+        </Col>
+      </Row>
     </Container>
   );
 }

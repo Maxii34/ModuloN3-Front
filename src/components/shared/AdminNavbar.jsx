@@ -2,9 +2,9 @@ import { Link, useLocation, useNavigate } from "react-router";
 import "./AdminNavbar.css";
 import { FaBed, FaUsers, FaSignOutAlt, FaFolderPlus } from "react-icons/fa";
 import { useState } from "react";
-import { ModalHabitacionerForm } from "../ui/ModalHabitacionerForm";
+import { ModalHabitacionForm } from "../ui/ModalHabitacionerForm";
 
-const AdminNavbar = ({ onLogout, setUsuarioLogueado }) => {
+const AdminNavbar = ({ onLogout, setUsuarioLogueado, onHabitacionCreada }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -15,7 +15,12 @@ const AdminNavbar = ({ onLogout, setUsuarioLogueado }) => {
 
   const menuItems = [
     { path: "/admin-habitaciones", label: "Habitaciones", icon: FaBed },
-    { path: "/admin-habitaciones", label: "Agregar Habitación", icon: FaFolderPlus, action: handleShow},
+    {
+      path: "/admin-habitaciones",
+      label: "Agregar Habitación",
+      icon: FaFolderPlus,
+      action: handleShow,
+    },
     { path: "/admin-usuarios", label: "Usuarios", icon: FaUsers },
   ];
 
@@ -45,7 +50,7 @@ const AdminNavbar = ({ onLogout, setUsuarioLogueado }) => {
             // Si tiene path, renderizamos un Link (Navegación)
             if (item.path) {
               const isActive = location.pathname === item.path && !item.action;
-              
+
               const handleClick = (e) => {
                 if (item.action) {
                   e.preventDefault();
@@ -112,7 +117,11 @@ const AdminNavbar = ({ onLogout, setUsuarioLogueado }) => {
       </nav>
 
       {/* El componente del modal */}
-      <ModalHabitacionerForm show={show} onHide={handleClose} />
+      <ModalHabitacionForm
+        show={show}
+        onHide={handleClose}
+        onHabitacionCreada={onHabitacionCreada}
+      />
     </>
   );
 };

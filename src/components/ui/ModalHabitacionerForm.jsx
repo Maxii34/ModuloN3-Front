@@ -2,6 +2,8 @@ import { Modal, Form, Button, Row, Col } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
 import { crearHabitacion } from "../helpers/queries";
+import { useHabitaciones } from "../context/HabitacionesContext";
+
 
 export const ModalHabitacionForm = ({ show, onHide, onHabitacionCreada }) => {
   const {
@@ -10,6 +12,9 @@ export const ModalHabitacionForm = ({ show, onHide, onHabitacionCreada }) => {
     reset,
     formState: { errors },
   } = useForm();
+
+  const { notificarHabitacionCreada } = useHabitaciones()
+
 
   // CREAR (POST)
   const onSubmit = async (data) => {
@@ -48,23 +53,47 @@ export const ModalHabitacionForm = ({ show, onHide, onHabitacionCreada }) => {
         return;
       }
 
+      // valida numero duplicado de habitaciones
+      const habitacionesBack = import.meta.env.VITE_API_HABITACIONES;
+      const respuestaHabitaciones = await fetch(habitacionesBack);
+      const habitacionesExistentes = await respuestaHabitaciones.json();
+
+      const numeroYaExiste = habitacionesExistentes.some(
+        (hab) => hab.numero === habitacionNueva.numero,
+      );
+
+      if (numeroYaExiste) {
+        Swal.fire({
+          icon: "warning",
+          title: "Habitación Ya Registrada",
+          text: `La habitación número ${habitacionNueva.numero} ya fue creada anteriormente. No puedes tener dos habitaciones con el mismo número.`,
+          confirmButtonText: "Elegir otro número",
+          confirmButtonColor: "#f39c12",
+          footer:
+            "Verifica los números disponibles en la lista de habitaciones",
+        });
+        return;
+      }
+
       const respuesta = await crearHabitacion(habitacionNueva);
       if (respuesta && respuesta.status === 201) {
+        if (onHabitacionCreada) {
+          onHabitacionCreada();
+        }
+        notificarHabitacionCreada()
+
         Swal.fire({
           title: "¡Creada!",
           text: "La habitación se guardó correctamente",
           icon: "success",
-          timer: 2500,
+          timer: 2000,
           timerProgressBar: true,
           showConfirmButton: false,
           toast: true,
           position: "top-end",
         });
         reset();
-        //onHide(); // Cerrar el modal
-        if (onHabitacionCreada) {
-          onHabitacionCreada();
-        }
+        onHide(); 
       } else if (respuesta) {
         const mensaje =
           respuesta.datos?.mensaje ||

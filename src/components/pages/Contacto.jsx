@@ -273,7 +273,7 @@ export const Contacto = () => {
 
         {/* --- Columna Derecha: Información de Contacto --- */}
         <Col lg={5}>
-          <Card className="shadow-sm border h-100 p-4">
+          <Card className="shadow-sm border h-auto p-4">
             <Card.Body>
               <h4 className="fw-bold mb-4">Información de Contacto</h4>
 

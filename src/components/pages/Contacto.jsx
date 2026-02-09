@@ -330,16 +330,6 @@ export const Contacto = () => {
                   </div>
                 </div>
               </div>
-
-              {/* Mapa (Placeholder) */}
-              <div
-                className="mt-4 border rounded overflow-hidden"
-                style={{ height: "200px", backgroundColor: "#f5f5f5" }}
-              >
-                <div className="d-flex justify-content-center align-items-center h-100 text-muted small">
-                  MAPA DE UBICACIÓN (Placeholder)
-                </div>
-              </div>
             </Card.Body>
           </Card>
         </Col>

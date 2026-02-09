@@ -286,9 +286,6 @@ export const Contacto = () => {
                   <div>
                     <h6 className="mb-1 fw-semibold">Dirección</h6>
                     <p className="mb-0 text-muted">Tucuman</p>
-                    <a href="#" className="small">
-                      Ver en mapa
-                    </a>
                   </div>
                 </div>
 

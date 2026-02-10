@@ -273,7 +273,7 @@ export const Contacto = () => {
 
         {/* --- Columna Derecha: Información de Contacto --- */}
         <Col lg={5}>
-          <Card className="shadow-sm border h-100 p-4">
+          <Card className="shadow-sm border h-auto p-4">
             <Card.Body>
               <h4 className="fw-bold mb-4">Información de Contacto</h4>
 
@@ -286,9 +286,6 @@ export const Contacto = () => {
                   <div>
                     <h6 className="mb-1 fw-semibold">Dirección</h6>
                     <p className="mb-0 text-muted">Tucuman</p>
-                    <a href="#" className="small">
-                      Ver en mapa
-                    </a>
                   </div>
                 </div>
 
@@ -328,16 +325,6 @@ export const Contacto = () => {
                       Respuesta rápida por WhatsApp
                     </p>
                   </div>
-                </div>
-              </div>
-
-              {/* Mapa (Placeholder) */}
-              <div
-                className="mt-4 border rounded overflow-hidden"
-                style={{ height: "200px", backgroundColor: "#f5f5f5" }}
-              >
-                <div className="d-flex justify-content-center align-items-center h-100 text-muted small">
-                  MAPA DE UBICACIÓN (Placeholder)
                 </div>
               </div>
             </Card.Body>

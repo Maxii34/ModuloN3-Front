@@ -20,6 +20,7 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import ProtectedAdminRoute from "./components/auth/ProtectedAdminRoute";
 import ProtectedUserRoute from "./components/auth/ProtectedUserRoute";
 import MiReserva from "./components/pages/MiReserva";
+import { HabitacionesProvider } from "./components/context/HabitacionesContext";
 
 
 function AppContent() {
@@ -188,7 +189,9 @@ function AppRouter({
 function App() {
   return (
     <AuthProvider>
+      <HabitacionesProvider>
       <AppContent />
+      </HabitacionesProvider>
     </AuthProvider>
   );
 }

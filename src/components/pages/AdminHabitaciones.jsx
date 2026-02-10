@@ -6,6 +6,8 @@ import "../../index.css";
 import CardsHabitaciones from "../pages/habitaciones/CardsHabitaciones";
 import ModalEditarHabitacion from "../ui/ModalEditarHabitacion";
 import { eliminarHabitacion } from "../../services/habitacionesAPI";
+import { useHabitaciones } from "../context/HabitacionesContext";
+
 
 const AdminHabitaciones = () => {
   const [habitaciones, setHabitaciones] = useState([]);
@@ -13,6 +15,8 @@ const AdminHabitaciones = () => {
   // ESTADOS PARA EL MODAL DE EDITAR
   const [showModalEditar, setShowModalEditar] = useState(false);
   const [habitacionSeleccionada, setHabitacionSeleccionada] = useState(null);
+
+  const { refreshKey } = useHabitaciones();
 
   const habitacionesBack = import.meta.env.VITE_API_HABITACIONES;
 
@@ -29,7 +33,7 @@ const AdminHabitaciones = () => {
 
   useEffect(() => {
     obtenerHabitaciones();
-  }, []);
+  }, [refreshKey]);
 
   // BORRAR (DELETE)
   const borrarHabitacion = (id) => {

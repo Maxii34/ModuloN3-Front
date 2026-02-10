@@ -21,29 +21,54 @@ const CardsHabitaciones = ({
               }}
             />
 
-            <Card.Body>
-              <div className="d-flex justify-content-between">
-                <Card.Title>Habitación {hab.numero}</Card.Title>
+            <Card.Body className="p-2">
+              <div
+                className="text-uppercase fw-bold text-secondary mb-2"
+                style={{ fontSize: "0.8rem", letterSpacing: "2px" }}
+              >
+                Habitación {hab.numero}
+              </div>
+
+              <h3
+                className="fw-bold text-capitalize mb-1"
+                style={{ color: "#212529" }}
+              >
+                {hab.tipo}
+              </h3>
+
+              {/* 3. Estado: Ahora como una línea divisoria suave que no estorba arriba */}
+              <div className="mb-2">
                 <span
-                  className={`fw-bold ${
+                  className={`badge rounded-pill px-2 py-1 border ${
                     hab.estado?.toLowerCase() === "disponible"
-                      ? "text-success"
+                      ? "bg-success-subtle text-success border-success"
                       : hab.estado?.toLowerCase() === "ocupada"
-                      ? "text-danger"
-                      : "text-warning"
+                        ? "bg-danger-subtle text-danger border-danger"
+                        : "bg-warning-subtle text-warning border-warning"
                   }`}
+                  style={{ fontSize: "0.75rem", fontWeight: "700" }}
                 >
-                  {hab.estado}
+                  ● {hab.estado}
                 </span>
               </div>
-              <Card.Text className="text-capitalize">{hab.tipo}</Card.Text>
-              <Card.Text className="fw-bold">${hab.precio} / noche</Card.Text>
+
+              <hr className="my-1 opacity-25" />
+
+              <div className="d-flex align-items-end">
+                <span className="h5 fw-bold text-dark mb-0">${hab.precio}</span>
+                <span
+                  className="text-muted ms-2 mb-1"
+                  style={{ fontSize: "0.9rem" }}
+                >
+                  / noche
+                </span>
+              </div>
             </Card.Body>
 
             <Card.Footer className="d-flex justify-content-between bg-white border-top-0 pb-3 gap-1">
               <Button
                 variant="primary"
-                className="btn-room"
+                className="btn-room shadow-lg"
                 onClick={() => onEditarHabitacion(hab)}
               >
                 <i className="bi bi-pencil-fill"></i> Editar
@@ -51,7 +76,7 @@ const CardsHabitaciones = ({
 
               <Button
                 variant="danger"
-                className="btn-room"
+                className="btn-room shadow-lg"
                 onClick={() => borrarHabitacion(hab._id || hab.id)}
               >
                 <i className="bi bi-trash-fill"></i> Eliminar

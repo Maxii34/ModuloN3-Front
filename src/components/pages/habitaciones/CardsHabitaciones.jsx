@@ -115,7 +115,7 @@ const CardsHabitaciones = ({ habitaciones, borrarHabitacion, onEditarHabitacion 
                         )}
                         <Button 
                           variant="link" 
-                          className="p-0 text-muted text-decoration-none" 
+                          className="p-0 text-muted text-decoration-none btn btn-light pe-1 " 
                           onClick={() => handleShow(infoReserva)}
                         >
                           <i className="bi bi-eye-fill ms-1"></i> Ver

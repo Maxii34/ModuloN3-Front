@@ -18,13 +18,28 @@ const CardsHabitaciones = ({ habitaciones, borrarHabitacion, onEditarHabitacion 
     setShow(true);
   };
 
-  const calcularEstado = (reservas) => {
-    if (!reservas || reservas.length === 0) return "disponible";
+  
+  const calcularEstado = (habitacion) => {
+    // Si está en mantenimiento, ese estado prevalece sobre todo
+    if (habitacion.estado === "mantenimiento") {
+      return "mantenimiento";
+    }
+
+    // Si no hay reservas, usar el estado manual de la habitación
+    if (!habitacion.reservas || habitacion.reservas.length === 0) {
+      return habitacion.estado || "disponible";
+    }
+
     const hoy = new Date();
     hoy.setHours(0, 0, 0, 0);
-    const reservasActivas = reservas.filter((r) => r.estado === "activa");
-    if (reservasActivas.length === 0) return "disponible";
+    const reservasActivas = habitacion.reservas.filter((r) => r.estado === "activa");
+    
+    // Si no hay reservas activas, usar el estado manual de la habitación
+    if (reservasActivas.length === 0) {
+      return habitacion.estado || "disponible";
+    }
 
+    // Verificar si hay una reserva actual (ocupada)
     const reservaActual = reservasActivas.find((r) => {
       const entrada = new Date(r.fechaEntrada);
       const salida = new Date(r.fechaSalida);
@@ -34,8 +49,13 @@ const CardsHabitaciones = ({ habitaciones, borrarHabitacion, onEditarHabitacion 
     });
 
     if (reservaActual) return "ocupada";
+    
+    // Verificar si hay reservas futuras
     const reservaFutura = reservasActivas.find((r) => new Date(r.fechaEntrada) > hoy);
-    return reservaFutura ? "reservada" : "disponible";
+    if (reservaFutura) return "reservada";
+    
+    // Si no hay reservas que afecten el estado actual, usar el estado manual
+    return habitacion.estado || "disponible";
   };
 
   const obtenerInfoReserva = (reservas) => {
@@ -69,11 +89,22 @@ const CardsHabitaciones = ({ habitaciones, borrarHabitacion, onEditarHabitacion 
     });
   };
 
+  //obtiene los colores segun el estado
+  const obtenerColorEstado = (estado) => {
+    const colores = {
+      disponible: "success",
+      ocupada: "danger",
+      reservada: "warning",
+      mantenimiento: "secondary"
+    };
+    return colores[estado] || "secondary";
+  };
+
   return (
     <>
       <Row className="g-4">
         {habitaciones.map((hab) => {
-          const estadoCalculado = calcularEstado(hab.reservas);
+          const estadoCalculado = calcularEstado(hab);
           const infoReserva = obtenerInfoReserva(hab.reservas);
 
           return (
@@ -91,15 +122,14 @@ const CardsHabitaciones = ({ habitaciones, borrarHabitacion, onEditarHabitacion 
                 <Card.Body>
                   <Card.Title>Habitación {hab.numero}</Card.Title>
 
-                  <span className={`fw-bold text-capitalize d-block mb-2 ${
-                      estadoCalculado === "disponible" ? "text-success" : 
-                      estadoCalculado === "ocupada" ? "text-danger" : "text-warning"
-                    }`}
+                  <Badge 
+                    bg={obtenerColorEstado(estadoCalculado)}
+                    className="fw-bold text-capitalize d-block"
                   >
                     {estadoCalculado}
-                  </span>
+                  </Badge>
 
-                  {infoReserva && (
+                  {infoReserva && estadoCalculado !== "mantenimiento" && (
                     <div className="mb-2">
                       <small>
                         {infoReserva.tipo === "actual" ? (
@@ -120,6 +150,15 @@ const CardsHabitaciones = ({ habitaciones, borrarHabitacion, onEditarHabitacion 
                         >
                           <i className="bi bi-eye-fill ms-1"></i> Ver
                         </Button>
+                      </small>
+                    </div>
+                  )}
+
+                  {estadoCalculado === "mantenimiento" && (
+                    <div className="mb-2">
+                      <small className="text-muted">
+                        <i className="bi bi-tools me-1"></i>
+                        Habitación en mantenimiento
                       </small>
                     </div>
                   )}

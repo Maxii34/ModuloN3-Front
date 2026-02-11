@@ -1,4 +1,4 @@
-import { Modal, Form, Button, Row, Col } from "react-bootstrap";
+import { Modal, Form, Button, Row, Col, Alert } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { useEffect } from "react";
 import Swal from "sweetalert2";
@@ -65,7 +65,6 @@ const ModalEditarHabitacion = ({
 
       if (respuesta) {
         onHabitacionEditada(); // actualiza
-        //reset(); //Recetea
         onHide(); // cierra modal
 
         Swal.fire({
@@ -110,7 +109,7 @@ const ModalEditarHabitacion = ({
                     min: { value: 1, message: "El número debe ser mayor a 0" },
                     max: {
                       value: 500,
-                      message: "El número deve ser menos a 500",
+                      message: "El número debe ser menor a 500",
                     },
                   })}
                 />
@@ -173,11 +172,11 @@ const ModalEditarHabitacion = ({
                     required: "La capacidad es obligatoria",
                     min: {
                       value: 1,
-                      message: "Mínimo de personas deve ser payor que 1",
+                      message: "Mínimo de personas debe ser mayor que 1",
                     },
                     max: {
                       value: 10,
-                      message: "El miximo de persona deve ser menos a 10",
+                      message: "El máximo de personas debe ser menor a 10",
                     },
                   })}
                 />
@@ -197,11 +196,11 @@ const ModalEditarHabitacion = ({
                     required: "El piso es obligatorio",
                     min: {
                       value: 0,
-                      message: "El numero de piso deve ser mayor a 0",
+                      message: "El número de piso debe ser mayor a 0",
                     },
                     max: {
                       value: 15,
-                      message: "El numero de piso deve ser menor a 15",
+                      message: "El número de piso debe ser menor a 15",
                     },
                   })}
                 />
@@ -225,11 +224,11 @@ const ModalEditarHabitacion = ({
                     required: "Los metros cuadrados son obligatorios",
                     min: {
                       value: 5,
-                      message: "Debe ser mayor a 5, metros cuedrados",
+                      message: "Debe ser mayor a 5 metros cuadrados",
                     },
                     max: {
                       value: 200,
-                      menssage: "Deve ser menor a 200, metros cuadrados",
+                      message: "Debe ser menor a 200 metros cuadrados",
                     },
                   })}
                 />
@@ -251,12 +250,12 @@ const ModalEditarHabitacion = ({
                     minLength: {
                       value: 2,
                       message:
-                        "Las características debe ser mayor a 2 caracteres",
+                        "Las características deben ser mayor a 2 caracteres",
                     },
                     maxLength: {
                       value: 80,
                       message:
-                        "Las características debe ser menor a 80 caracteres",
+                        "Las características deben ser menor a 80 caracteres",
                     },
                   })}
                 />
@@ -278,11 +277,11 @@ const ModalEditarHabitacion = ({
                 required: "La descripción es obligatoria",
                 minLength: {
                   value: 10,
-                  message: "La descripcion debe ser mayor a 10 caracteres",
+                  message: "La descripción debe ser mayor a 10 caracteres",
                 },
                 maxLength: {
                   value: 500,
-                  message: "La descripcion debe ser menor a 500 caracteres",
+                  message: "La descripción debe ser menor a 500 caracteres",
                 },
               })}
             />
@@ -313,22 +312,40 @@ const ModalEditarHabitacion = ({
 
           <Form.Group className="mb-4">
             <Form.Label className="fw-bold">Estado de la Habitación</Form.Label>
-            <div className="d-flex flex-wrap gap-3 p-2 border rounded bg-light">
-              {["disponible", "ocupada", "reservada", "mantenimiento"].map(
-                (estado) => (
-                  <Form.Check
-                    type="radio"
-                    key={estado}
-                    label={estado.charAt(0).toUpperCase() + estado.slice(1)}
-                    value={estado}
-                    id={`radio-${estado}`}
-                    {...register("estado", {
-                      required: "Seleccione un estado",
-                    })}
-                  />
-                ),
-              )}
+            <div className="d-flex flex-wrap gap-3 p-3 border rounded bg-light">
+              <Form.Check
+                type="radio"
+                id="radio-disponible"
+                label={
+                  <span>
+                    <i className="bi bi-check-circle-fill text-success me-2"></i>
+                    Disponible
+                  </span>
+                }
+                value="disponible"
+                {...register("estado", {
+                  required: "Seleccione un estado",
+                })}
+              />
+              <Form.Check
+                type="radio"
+                id="radio-mantenimiento"
+                label={
+                  <span>
+                    <i className="bi bi-tools text-secondary me-2"></i>
+                    Mantenimiento
+                  </span>
+                }
+                value="mantenimiento"
+                {...register("estado", {
+                  required: "Seleccione un estado",
+                })}
+              />
             </div>
+            <Form.Text className="text-muted">
+              <i className="bi bi-lightbulb me-1"></i>
+              Los estados "Ocupada" y "Reservada" se asignan automáticamente cuando hay reservas activas.
+            </Form.Text>
             {errors.estado && (
               <span className="text-danger small d-block mt-1">
                 {errors.estado.message}
@@ -337,10 +354,11 @@ const ModalEditarHabitacion = ({
           </Form.Group>
 
           <div className="d-flex gap-2 justify-content-end">
-            <Button variant="danger" onClick={onHide}>
+            <Button variant="secondary" onClick={onHide}>
               Cancelar
             </Button>
             <Button variant="dark" type="submit">
+              <i className="bi bi-save me-2"></i>
               Guardar Cambios
             </Button>
           </div>

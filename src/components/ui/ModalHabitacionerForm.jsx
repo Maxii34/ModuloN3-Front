@@ -293,7 +293,7 @@ export const ModalHabitacionForm = ({ show, onHide, onHabitacionCreada }) => {
               <Form.Group className="mb-3">
                 <Form.Label>Estado *</Form.Label>
                 <div className="d-flex flex-wrap gap-2 mt-2">
-                  {["disponible", "ocupada", "reservada", "mantenimiento"].map(
+                  {["disponible", "mantenimiento"].map(
                     (estado) => (
                       <Form.Check
                         type="radio"

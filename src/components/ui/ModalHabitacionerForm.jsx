@@ -4,7 +4,6 @@ import Swal from "sweetalert2";
 import { crearHabitacion } from "../helpers/queries";
 import { useHabitaciones } from "../context/HabitacionesContext";
 
-
 export const ModalHabitacionForm = ({ show, onHide, onHabitacionCreada }) => {
   const {
     register,
@@ -13,8 +12,7 @@ export const ModalHabitacionForm = ({ show, onHide, onHabitacionCreada }) => {
     formState: { errors },
   } = useForm();
 
-  const { notificarHabitacionCreada } = useHabitaciones()
-
+  const { notificarHabitacionCreada } = useHabitaciones();
 
   // CREAR (POST)
   const onSubmit = async (data) => {
@@ -80,7 +78,7 @@ export const ModalHabitacionForm = ({ show, onHide, onHabitacionCreada }) => {
         if (onHabitacionCreada) {
           onHabitacionCreada();
         }
-        notificarHabitacionCreada()
+        notificarHabitacionCreada();
 
         Swal.fire({
           title: "¡Creada!",
@@ -93,7 +91,7 @@ export const ModalHabitacionForm = ({ show, onHide, onHabitacionCreada }) => {
           position: "top-end",
         });
         reset();
-        onHide(); 
+        onHide();
       } else if (respuesta) {
         const mensaje =
           respuesta.datos?.mensaje ||
@@ -133,6 +131,10 @@ export const ModalHabitacionForm = ({ show, onHide, onHabitacionCreada }) => {
                   {...register("numero", {
                     required: "El número de habitación es obligatorio",
                     min: { value: 1, message: "El número debe ser mayor a 0" },
+                    max: {
+                      value: 500,
+                      message: "El número deve ser menos a 500",
+                    },
                   })}
                 />
                 {errors.numero && (
@@ -174,6 +176,10 @@ export const ModalHabitacionForm = ({ show, onHide, onHabitacionCreada }) => {
                       value: 0,
                       message: "El precio debe ser mayor o igual a 0",
                     },
+                    max: {
+                      value: 200000,
+                      message: "El precio debe ser menor a 200,000",
+                    },
                   })}
                 />
                 {errors.precio && (
@@ -190,7 +196,14 @@ export const ModalHabitacionForm = ({ show, onHide, onHabitacionCreada }) => {
                   placeholder="Número de personas"
                   {...register("capacidad", {
                     required: "La capacidad es obligatoria",
-                    min: { value: 1, message: "Mínimo 1 persona" },
+                    min: {
+                      value: 1,
+                      message: "Mínimo de personas deve ser payor que 1",
+                    },
+                    max: {
+                      value: 10,
+                      message: "El miximo de persona deve ser menos a 10",
+                    },
                   })}
                 />
                 {errors.capacidad && (
@@ -209,11 +222,13 @@ export const ModalHabitacionForm = ({ show, onHide, onHabitacionCreada }) => {
                     required: "Las características son obligatorias",
                     minLength: {
                       value: 2,
-                      message: "Mínimo 2 caracteres",
+                      message:
+                        "Las características debe ser mayor a 2 caracteres",
                     },
                     maxLength: {
-                      value: 50,
-                      message: "Máximo 50 caracteres permitidos",
+                      value: 80,
+                      message:
+                        "Las características debe ser menor a 80 caracteres",
                     },
                   })}
                 />
@@ -234,7 +249,14 @@ export const ModalHabitacionForm = ({ show, onHide, onHabitacionCreada }) => {
                   placeholder="Número de piso"
                   {...register("piso", {
                     required: "El piso es obligatorio",
-                    min: { value: 0, message: "Piso no válido" },
+                    min: {
+                      value: 0,
+                      message: "El numero de piso deve ser mayor a 0",
+                    },
+                    max: {
+                      value: 15,
+                      message: "El numero de piso deve ser menor a 15",
+                    },
                   })}
                 />
                 {errors.piso && (
@@ -251,7 +273,14 @@ export const ModalHabitacionForm = ({ show, onHide, onHabitacionCreada }) => {
                   placeholder="m²"
                   {...register("metros", {
                     required: "Los metros cuadrados son obligatorios",
-                    min: { value: 1, message: "Debe ser mayor a 0" },
+                    min: {
+                      value: 5,
+                      message: "Debe ser mayor a 5, metros cuedrados",
+                    },
+                    max: {
+                      value: 200,
+                      menssage: "Deve ser menor a 200, metros cuadrados",
+                    },
                   })}
                 />
                 {errors.metrosCuadrados && (

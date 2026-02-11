@@ -598,3 +598,35 @@ a {
   font-style: italic;
   color: #555; 
 }
+
+/* Botón Editar - Verde Mate / Salvia */
+.btn-edit-custom {
+  background-color: #d4edda !important; 
+  border: 1px solid #c3e6cb !important;
+  color: #155724 !important; 
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+  flex: 1;
+}
+
+.btn-edit-custom:hover {
+  background-color: #c3e6cb !important;
+  transform: translateY(-2px); 
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* Botón Eliminar - Negro Carbón */
+.btn-delete-custom {
+  background-color: #343a40 !important;
+  border: 1px solid #212529 !important;
+  color: #ffffff !important;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+  flex: 1;
+}
+
+.btn-delete-custom:hover {
+  background-color: #212529 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}

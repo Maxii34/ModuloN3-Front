@@ -29,10 +29,7 @@ const ModalEditarHabitacion = ({
       setValue("caracteristicas", habitacion.caracteristicas || "");
       setValue("descripcion", habitacion.descripcion || "");
       setValue("estado", habitacion.estado);
-      setValue(
-        "metrosCuadrados",
-        habitacion.metros || habitacion.metrosCuadrados,
-      );
+      setValue("metros", habitacion.metros);
       setValue("imagen", habitacion.imagen || habitacion.imagenes || "");
     }
   }, [habitacion, show, setValue]);
@@ -54,7 +51,7 @@ const ModalEditarHabitacion = ({
         precio: Number(data.precio),
         capacidad: Number(data.capacidad),
         piso: Number(data.piso),
-        metros: Number(data.metrosCuadrados),
+        metros: Number(data.metros),
         imagen: data.imagen,
         estado: data.estado,
       };
@@ -108,14 +105,30 @@ const ModalEditarHabitacion = ({
                 <Form.Control
                   type="number"
                   placeholder="Ej: 101"
-                  {...register("numero", { required: "Obligatorio" })}
+                  {...register("numero", {
+                    required: "El número de habitación es obligatorio",
+                    min: { value: 1, message: "El número debe ser mayor a 0" },
+                    max: {
+                      value: 500,
+                      message: "El número deve ser menos a 500",
+                    },
+                  })}
                 />
+                {errors.numero && (
+                  <span className="text-danger small">
+                    {errors.numero.message}
+                  </span>
+                )}
               </Form.Group>
             </Col>
             <Col md={6}>
               <Form.Group className="mb-3">
                 <Form.Label className="fw-bold">Tipo de Habitación</Form.Label>
-                <Form.Select {...register("tipo", { required: "Obligatorio" })}>
+                <Form.Select
+                  {...register("tipo", {
+                    required: "Seleccione un tipo de habitación",
+                  })}
+                >
                   <option value="individual">Individual</option>
                   <option value="doble">Doble</option>
                   <option value="matrimonial">Matrimonial</option>
@@ -133,13 +146,22 @@ const ModalEditarHabitacion = ({
                 <Form.Control
                   type="number"
                   {...register("precio", {
-                    required: "Precio obligatorio",
-                    min: { value: 0, message: "Mínimo 0" },
+                    required: "El precio es obligatorio",
+                    min: {
+                      value: 0,
+                      message: "El precio debe ser mayor o igual a 0",
+                    },
+                    max: {
+                      value: 200000,
+                      message: "El precio debe ser menor a 200,000",
+                    },
                   })}
                 />
-                <Form.Text className="text-danger">
-                  {errors.precio?.message}
-                </Form.Text>
+                {errors.precio && (
+                  <span className="text-danger small">
+                    {errors.precio.message}
+                  </span>
+                )}
               </Form.Group>
             </Col>
             <Col md={4}>
@@ -147,11 +169,23 @@ const ModalEditarHabitacion = ({
                 <Form.Label className="fw-bold">Capacidad</Form.Label>
                 <Form.Control
                   type="number"
-                  {...register("capacidad", { required: "Obligatorio" })}
+                  {...register("capacidad", {
+                    required: "La capacidad es obligatoria",
+                    min: {
+                      value: 1,
+                      message: "Mínimo de personas deve ser payor que 1",
+                    },
+                    max: {
+                      value: 10,
+                      message: "El miximo de persona deve ser menos a 10",
+                    },
+                  })}
                 />
-                <Form.Text className="text-danger">
-                  {errors.capacidad?.message}
-                </Form.Text>
+                {errors.capacidad && (
+                  <span className="text-danger small">
+                    {errors.capacidad.message}
+                  </span>
+                )}
               </Form.Group>
             </Col>
             <Col md={4}>
@@ -159,11 +193,23 @@ const ModalEditarHabitacion = ({
                 <Form.Label className="fw-bold">Piso</Form.Label>
                 <Form.Control
                   type="number"
-                  {...register("piso", { required: "Obligatorio" })}
+                  {...register("piso", {
+                    required: "El piso es obligatorio",
+                    min: {
+                      value: 0,
+                      message: "El numero de piso deve ser mayor a 0",
+                    },
+                    max: {
+                      value: 15,
+                      message: "El numero de piso deve ser menor a 15",
+                    },
+                  })}
                 />
-                <Form.Text className="text-danger">
-                  {errors.piso?.message}
-                </Form.Text>
+                {errors.piso && (
+                  <span className="text-danger small">
+                    {errors.piso.message}
+                  </span>
+                )}
               </Form.Group>
             </Col>
           </Row>
@@ -175,14 +221,23 @@ const ModalEditarHabitacion = ({
                 <Form.Control
                   type="number"
                   placeholder="Ej: 25"
-                  {...register("metrosCuadrados", {
-                    required: "Obligatorio",
-                    min: { value: 5, message: "Mínimo 5" },
+                  {...register("metros", {
+                    required: "Los metros cuadrados son obligatorios",
+                    min: {
+                      value: 5,
+                      message: "Debe ser mayor a 5, metros cuedrados",
+                    },
+                    max: {
+                      value: 200,
+                      menssage: "Deve ser menor a 200, metros cuadrados",
+                    },
                   })}
                 />
-                <Form.Text className="text-danger">
-                  {errors.metrosCuadrados?.message}
-                </Form.Text>
+                {errors.metros && (
+                  <span className="text-danger small">
+                    {errors.metros.message}
+                  </span>
+                )}
               </Form.Group>
             </Col>
             <Col md={8}>
@@ -191,8 +246,25 @@ const ModalEditarHabitacion = ({
                 <Form.Control
                   type="text"
                   placeholder="TV, Wi-Fi, Aire acondicionado..."
-                  {...register("caracteristicas", { required: true })}
+                  {...register("caracteristicas", {
+                    required: "Las características son obligatorias",
+                    minLength: {
+                      value: 2,
+                      message:
+                        "Las características debe ser mayor a 2 caracteres",
+                    },
+                    maxLength: {
+                      value: 80,
+                      message:
+                        "Las características debe ser menor a 80 caracteres",
+                    },
+                  })}
                 />
+                {errors.caracteristicas && (
+                  <span className="text-danger small">
+                    {errors.caracteristicas.message}
+                  </span>
+                )}
               </Form.Group>
             </Col>
           </Row>
@@ -202,8 +274,23 @@ const ModalEditarHabitacion = ({
             <Form.Control
               as="textarea"
               rows={3}
-              {...register("descripcion", { required: true })}
+              {...register("descripcion", {
+                required: "La descripción es obligatoria",
+                minLength: {
+                  value: 10,
+                  message: "La descripcion debe ser mayor a 10 caracteres",
+                },
+                maxLength: {
+                  value: 500,
+                  message: "La descripcion debe ser menor a 500 caracteres",
+                },
+              })}
             />
+            {errors.descripcion && (
+              <span className="text-danger small">
+                {errors.descripcion.message}
+              </span>
+            )}
           </Form.Group>
 
           <Form.Group className="mb-3">
@@ -211,11 +298,17 @@ const ModalEditarHabitacion = ({
             <Form.Control
               type="text"
               placeholder="https://example.com/foto.jpg"
-              {...register("imagen", { required: "La URL es obligatoria" })}
+              {...register("imagen", {
+                required: "La URL de la imagen es obligatoria",
+                pattern: {
+                  value: /^https?:\/\/[\w\-]+(\.[\w\-]+)+[/#?]?.*$/,
+                  message: "Debe ser una URL válida (http/https)",
+                },
+              })}
             />
-            <Form.Text className="text-danger">
-              {errors.imagen?.message}
-            </Form.Text>
+            {errors.imagen && (
+              <span className="text-danger small">{errors.imagen.message}</span>
+            )}
           </Form.Group>
 
           <Form.Group className="mb-4">
@@ -229,11 +322,18 @@ const ModalEditarHabitacion = ({
                     label={estado.charAt(0).toUpperCase() + estado.slice(1)}
                     value={estado}
                     id={`radio-${estado}`}
-                    {...register("estado", { required: true })}
+                    {...register("estado", {
+                      required: "Seleccione un estado",
+                    })}
                   />
                 ),
               )}
             </div>
+            {errors.estado && (
+              <span className="text-danger small d-block mt-1">
+                {errors.estado.message}
+              </span>
+            )}
           </Form.Group>
 
           <div className="d-flex gap-2 justify-content-end">
